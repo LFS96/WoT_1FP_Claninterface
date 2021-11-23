@@ -67,7 +67,7 @@ if(isset($container)){
     <?= $this->Html->css("bootstrap-icons.min.css"); ?>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap4.min.css">
     <?= $this->Html->css("default.min.css"); ?>
-    <?= $this->Html->css("font_awesome/all.min.css"); ?>
+    <?= $this->Html->css("font_awesome/all.css"); ?>
     <?= $this->fetch('css'); ?>
 
     <?= $this->Html->script('jquery-3.5.1.min.js') ?>
