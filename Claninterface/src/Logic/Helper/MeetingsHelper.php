@@ -7,6 +7,7 @@ namespace App\Logic\Helper;
 use App\Model\Entity\Meeting;
 use App\Model\Entity\Meetingparticipant;
 use App\Model\Table\MeetingsTable;
+use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 
@@ -34,6 +35,16 @@ class MeetingsHelper
             $MeetingsTable->save($meeting);
         }
     }
+    public static function joinTsBattleRoom($channellist){
+        $battleRooms = Configure::read('battle_rooms');
+        foreach ($battleRooms as $room){
+            if(str_contains($channellist, $room)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function findParticipant()
     {
         /**

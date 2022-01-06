@@ -116,6 +116,7 @@ if(isset($container)){
     <?= $this->fetch('tb_footer'); ?>
 </div>
 <?php  if( Configure::read('footer.enable') === true):  ?>
+<br /><br /><br /><br />
     <div class="container-fluid">
         <footer class="text-center text-lg-start bg-dark text-light fixed-bottom">
         <div class="row">

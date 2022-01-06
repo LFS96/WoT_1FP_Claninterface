@@ -10,4 +10,8 @@ return [
             'target' => true,
         ],
     ],
+    'battle_rooms' => [
+        "room 1",
+        "room 2",
+    ],
 ];
