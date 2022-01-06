@@ -66,7 +66,7 @@ if(isset($container)){
     <?= $this->Html->css('jquery-ui.min.css'); ?>
     <?= $this->Html->css("bootstrap-icons.min.css"); ?>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap4.min.css">
-    <?= $this->Html->css("default.min.css"); ?>
+    <?= $this->Html->css("default.css"); ?>
     <?= $this->Html->css("font_awesome/all.css"); ?>
     <?= $this->fetch('css'); ?>
 
@@ -115,15 +115,38 @@ if(isset($container)){
     <br/>
     <?= $this->fetch('tb_footer'); ?>
 </div>
-<span class="copyright-lfs96">by LFS96
-    <?= $this->Html->link('<i class="bi bi-github"></i>', 'https://github.com/LFS96/WoT_1FP_Claninterface', ["escape" => false, "target" => "_blank"]) ?>
-    <?= $this->Html->link('<i class="bi bi-telegram"></i>', 'https://t.me/FabiGothic', ["escape" => false, "target" => "_blank"]) ?>
-    <?= $this->Html->link('<i class="bi bi-instagram"></i>', 'https://instagram.com/fabigothic/', ["escape" => false, "target" => "_blank"]) ?><br/>
-    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank"><img
-            alt="GNU GENERAL PUBLIC LICENSE" style="border-width:0"
-            src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"
-            title="Dieses Werk ist lizenziert unter einer GNU GENERAL PUBLIC LICENSE"/></a>
-</span>
+<?php  if( Configure::read('footer.enable') === true):  ?>
+    <div class="container-fluid">
+        <footer class="text-center text-lg-start bg-dark text-light fixed-bottom">
+        <div class="row">
+            <div class="col-12">
+                <?= Configure::read('footer.text') ?> <br />
+                <?= $this->Html->link(Configure::read('footer.link.text'),Configure::read('footer.link.url'),["target" => Configure::read('footer.link.target')] ) ?>
+            </div>
+        </div>
+            <span class="copyright-lfs96 ">by LFS96
+        <?= $this->Html->link('<i class="bi bi-github"></i>', 'https://github.com/LFS96/WoT_1FP_Claninterface', ["escape" => false, "target" => "_blank"]) ?>
+                <?= $this->Html->link('<i class="bi bi-telegram"></i>', 'https://t.me/FabiGothic', ["escape" => false, "target" => "_blank"]) ?>
+                <?= $this->Html->link('<i class="bi bi-instagram"></i>', 'https://instagram.com/fabigothic/', ["escape" => false, "target" => "_blank"]) ?><br/>
+        <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank"><img
+                alt="GNU GENERAL PUBLIC LICENSE" style="border-width:0"
+                src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"
+                title="Dieses Werk ist lizenziert unter einer GNU GENERAL PUBLIC LICENSE"/></a>
+    </span>
+        </footer>
+    </div>
+<?php endif; ?>
+<?php  if( Configure::read('footer.enable') !== true):  ?>
+    <span class="copyright-lfs96">by LFS96
+        <?= $this->Html->link('<i class="bi bi-github"></i>', 'https://github.com/LFS96/WoT_1FP_Claninterface', ["escape" => false, "target" => "_blank"]) ?>
+        <?= $this->Html->link('<i class="bi bi-telegram"></i>', 'https://t.me/FabiGothic', ["escape" => false, "target" => "_blank"]) ?>
+        <?= $this->Html->link('<i class="bi bi-instagram"></i>', 'https://instagram.com/fabigothic/', ["escape" => false, "target" => "_blank"]) ?><br/>
+        <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank"><img
+                alt="GNU GENERAL PUBLIC LICENSE" style="border-width:0"
+                src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"
+                title="Dieses Werk ist lizenziert unter einer GNU GENERAL PUBLIC LICENSE"/></a>
+    </span>
+<?php endif; ?>
 <?= $this->fetch('scriptBottom'); ?>
 <script>
     $(document).ready(function (){$('[data-toggle="tooltip"]').tooltip();});

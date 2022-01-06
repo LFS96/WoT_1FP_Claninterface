@@ -82,6 +82,7 @@ try {
 if (file_exists(CONFIG . 'app_local.php')) {
     Configure::load('app_local', 'default');
     Configure::load('external_api', 'default');
+    Configure::load('clan_settings', 'default');
 }
 
 /*

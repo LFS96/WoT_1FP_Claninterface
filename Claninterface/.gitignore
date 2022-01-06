@@ -2,6 +2,7 @@
 ##########################
 /config/app_local.php
 /config/external_api.php
+/config/clan_settings.php
 /config/.env
 /logs/*
 /tmp/*
@@ -40,3 +41,4 @@ nbproject/*
 .vscode
 # Sass preprocessor
 .sass-cache/
+

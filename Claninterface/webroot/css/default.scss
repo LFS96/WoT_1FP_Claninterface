@@ -122,9 +122,18 @@
     a:hover {
         color: #6d9521;
     }
-
     img {
         height: 32px;
+    }
+}
+footer{
+    .copyright-lfs96 {
+        a, a:link {
+            color: lightgray;
+        }
+        a:hover {
+            color: #6d9521;
+        }
     }
 }
 
