@@ -1,0 +1,35 @@
+version: "3" #This is the docker-compose version, NOT the projektversion
+services:
+  claninterface_amp:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        branch: main
+    ports:
+      - "1080:80"  # nginx reverse Proxy
+      - "1443:443" # nginx reverse Proxy
+      # - "80:80"    # standalone
+      # - "443:443"  # standalone
+    environment:
+      - DB_HOST=claninterface_mysql
+      - DB_USER=root
+      - DB_PASS=123456
+      - DB_DATABASE=claninterface
+      - DEBUG=false
+    networks:
+      - claninterface
+  claninterface_mysql:
+    image: "mariadb"
+    volumes:
+      - ./data/db:/var/lib/mysql
+    ports:
+      - "3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=123456
+      - MARIADB_DATABASE=budget
+    networks:
+      - claninterface
+networks:
+  claninterface:
+    driver: bridge
