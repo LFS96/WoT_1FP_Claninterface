@@ -16,7 +16,7 @@ services:
       - DB_USER=root
       - DB_PASS=123456
       - DB_DATABASE=claninterface
-      - DEBUG=false
+      - DEBUG=true
     networks:
       - claninterface
   claninterface_mysql:

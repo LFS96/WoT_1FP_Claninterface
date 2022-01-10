@@ -81,9 +81,22 @@ try {
  */
 if (file_exists(CONFIG . 'app_local.php')) {
     Configure::load('app_local', 'default');
+}
+
+//Used in manual deployment
+if (file_exists(CONFIG . 'external_api.php')) {
     Configure::load('external_api', 'default');
+}
+if (file_exists(CONFIG . 'clan_settings.php')) {
     Configure::load('clan_settings', 'default');
 }
+
+// TODO: Combine both Deployment ways
+//Used in deplyment with docker
+if (file_exists(CONFIG . 'docker.php')) {
+    Configure::load('docker', 'default');
+}
+
 
 /*
  * When debug = true the metadata cache should only last
