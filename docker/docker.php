@@ -2,11 +2,68 @@
 
 return [
     /*
-     * Information where to find the Teamspeak
-     * - Host: IP or URL
-     * - Port: (default 10011) Port of Query
-     * - UID: UID of the virtual Server
+     * Debug Level:
+     *
+     * Production Mode:
+     * false: No error messages, errors, or warnings shown.
+     *
+     * Development Mode:
+     * true: Errors and warnings shown.
      */
+    'debug' => filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
+    /*
+     * Connection information used by the ORM to connect
+     * to your application's datastores.
+     *
+     * See app.php for more configuration options.
+     */
+    'Datasources' => [
+        'default' => [
+            'host' => env("DB_HOST",'localhost'),
+            /*
+             * CakePHP will use the default DB port based on the driver selected
+             * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
+             * the following line and set the port accordingly
+             */
+            //'port' => 'non_standard_port_number',
+
+            'username' => env("DB_USER",'root'),
+            'password' => env("DB_PASS",'123456'),
+
+            'database' => env("DB_DATABASE",'budget'),
+
+            /*
+             * You can use a DSN string to set the entire configuration
+             */
+            'url' => env('DATABASE_URL', null),
+        ],
+    ],
+
+    /*
+     * Email configuration.
+     *
+     * Host and credential configuration in case you are using SmtpTransport
+     *
+     * See app.php for more configuration options.
+     */
+    'EmailTransport' => [
+        'default' => [
+            'host' => env("EMAIL_HOST",'localhost'),
+            'port' => env("EMAIL_USER",25),
+            'username' => env("EMAIL_USER",null),
+            'password' => env("EMAIL_PASS",null),
+            'client' => env("EMAIL_CLIENT",null),
+            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
+        ],
+    ],
+
+
+/*
+ * Information where to find the Teamspeak
+ * - Host: IP or URL
+ * - Port: (default 10011) Port of Query
+ * - UID: UID of the virtual Server
+ */
     'TeamspeakQueryConnection' => [
         'host' => '127.0.0.1',
         'port' => 10011,
