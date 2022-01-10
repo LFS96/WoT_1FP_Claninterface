@@ -118,8 +118,6 @@ Wir verwenden das Wargaming-OpenID verfahren, bei diesem Bestätigt Wargaming, d
                             $status["icon"]." ".$status["button"],
                             ["controller" =>"Meetingregistrations", "action" => "setRegistrations", $registration["player"]->id, $registration["meeting"]->id, $key],
                             ["class"=> "btn btn-sm btn-{$status["class"]}", "escape" => false]); ?>
-
-
                     <?php
                      endif;
                      endforeach; ?>

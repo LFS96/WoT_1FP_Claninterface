@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc8582bfa2442409a2d8d6c2884066d2",
+    "content-hash": "0ee06c2b5ca520f3e623d3b310a71465",
     "packages": [
         {
             "name": "artur-stepien/wargaming-papi",
@@ -5657,6 +5657,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "cakephp/migrations": 0,
         "friendsofcake/bootstrap-ui": 20,
         "psy/psysh": 0
     },

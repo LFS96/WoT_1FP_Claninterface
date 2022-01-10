@@ -34,6 +34,8 @@ class Application extends BaseApplication
      */
     public function bootstrap()
     {
+        $this->addPlugin('Migrations');
+
         $this->addPlugin('BootstrapUI');
 
         $this->addPlugin('Migrations');
