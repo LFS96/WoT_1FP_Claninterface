@@ -21,13 +21,13 @@ services:
       - claninterface
   claninterface_mysql:
     image: "mariadb"
-    volumes:
-      - ./data/db:/var/lib/mysql
+    #volumes:
+    #  - ./data/db:/var/lib/mysql
     ports:
       - "3306"
     environment:
       - MARIADB_ROOT_PASSWORD=123456
-      - MARIADB_DATABASE=budget
+      - MARIADB_DATABASE=claninterface
     networks:
       - claninterface
 networks:
