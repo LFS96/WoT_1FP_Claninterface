@@ -22,6 +22,11 @@ class Initial extends AbstractMigration
                 'limit' => null,
                 'null' => false,
             ])
+            ->addColumn('cron', 'integer', [
+                'default' => '0',
+                'limit' => 11,
+                'null' => false,
+            ])
             ->addColumn('created', 'datetime', [
                 'default' => null,
                 'limit' => null,
@@ -30,11 +35,6 @@ class Initial extends AbstractMigration
             ->addColumn('short', 'string', [
                 'default' => null,
                 'limit' => 10,
-                'null' => false,
-            ])
-            ->addColumn('cron', 'integer', [
-                'default' => '1',
-                'limit' => 11,
                 'null' => false,
             ])
             ->create();
@@ -76,6 +76,49 @@ class Initial extends AbstractMigration
             ->addColumn('player_id', 'integer', [
                 'default' => null,
                 'limit' => 11,
+                'null' => true,
+            ])
+            ->addColumn('meeting_id', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => true,
+            ])
+            ->addColumn('joined', 'time', [
+                'default' => null,
+                'limit' => null,
+                'null' => true,
+            ])
+            ->addColumn('channel', 'string', [
+                'default' => null,
+                'limit' => 4369,
+                'null' => true,
+            ])
+            ->addColumn('wot', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => true,
+            ])
+            ->addColumn('teamspeak', 'string', [
+                'default' => null,
+                'limit' => 1020,
+                'null' => true,
+            ])
+            ->addColumn('modified', 'timestamp', [
+                'default' => null,
+                'limit' => null,
+                'null' => true,
+            ])
+            ->addColumn('created', 'timestamp', [
+                'default' => null,
+                'limit' => null,
+                'null' => true,
+            ])
+            ->create();
+
+        $this->table('meetingregistrations')
+            ->addColumn('player_id', 'integer', [
+                'default' => null,
+                'limit' => 11,
                 'null' => false,
             ])
             ->addColumn('meeting_id', 'integer', [
@@ -83,78 +126,63 @@ class Initial extends AbstractMigration
                 'limit' => 11,
                 'null' => false,
             ])
-            ->addColumn('joined', 'time', [
-                'default' => null,
-                'limit' => null,
-                'null' => false,
-            ])
-            ->addColumn('channel', 'text', [
-                'default' => null,
-                'limit' => null,
-                'null' => false,
-            ])
-            ->addColumn('wot', 'integer', [
+            ->addColumn('status', 'integer', [
                 'default' => null,
                 'limit' => 11,
                 'null' => false,
             ])
-            ->addColumn('teamspeak', 'string', [
-                'default' => null,
-                'limit' => 255,
-                'null' => false,
-            ])
-            ->addColumn('modified', 'datetime', [
+            ->addColumn('modified', 'timestamp', [
                 'default' => null,
                 'limit' => null,
-                'null' => false,
+                'null' => true,
             ])
-            ->addColumn('created', 'datetime', [
+            ->addColumn('created', 'timestamp', [
                 'default' => null,
                 'limit' => null,
-                'null' => false,
+                'null' => true,
             ])
             ->create();
 
         $this->table('meetings')
             ->addColumn('name', 'string', [
                 'default' => null,
-                'limit' => 255,
-                'null' => false,
+                'limit' => 1020,
+                'null' => true,
             ])
             ->addColumn('date', 'date', [
                 'default' => null,
                 'limit' => null,
-                'null' => false,
+                'null' => true,
             ])
             ->addColumn('start', 'time', [
                 'default' => null,
                 'limit' => null,
-                'null' => false,
+                'null' => true,
             ])
             ->addColumn('end', 'time', [
                 'default' => null,
                 'limit' => null,
-                'null' => false,
+                'null' => true,
             ])
             ->addColumn('cloned', 'integer', [
-                'default' => '0',
+                'default' => null,
                 'limit' => 11,
-                'null' => false,
+                'null' => true,
             ])
-            ->addColumn('modified', 'datetime', [
+            ->addColumn('modified', 'timestamp', [
                 'default' => null,
                 'limit' => null,
-                'null' => false,
+                'null' => true,
             ])
-            ->addColumn('created', 'datetime', [
+            ->addColumn('created', 'timestamp', [
                 'default' => null,
                 'limit' => null,
-                'null' => false,
+                'null' => true,
             ])
             ->addColumn('clan_id', 'integer', [
                 'default' => null,
                 'limit' => 11,
-                'null' => false,
+                'null' => true,
             ])
             ->create();
 
@@ -188,6 +216,12 @@ class Initial extends AbstractMigration
                 'default' => '0',
                 'limit' => 11,
                 'null' => false,
+            ])
+            ->addColumn('wn8', 'decimal', [
+                'default' => null,
+                'null' => true,
+                'precision' => 12,
+                'scale' => 4,
             ])
             ->addColumn('created', 'datetime', [
                 'default' => null,
@@ -313,6 +347,11 @@ class Initial extends AbstractMigration
                 'limit' => 255,
                 'null' => false,
             ])
+            ->addColumn('date_b', 'date', [
+                'default' => null,
+                'limit' => null,
+                'null' => false,
+            ])
             ->addColumn('damage', 'integer', [
                 'default' => null,
                 'limit' => 11,
@@ -383,6 +422,157 @@ class Initial extends AbstractMigration
                 'limit' => 11,
                 'null' => false,
             ])
+            ->addIndex(
+                [
+                    'date',
+                ]
+            )
+            ->addIndex(
+                [
+                    'player_id',
+                    'tank_id',
+                    'battletype',
+                ]
+            )
+            ->addIndex(
+                [
+                    'player_id',
+                    'date',
+                    'battletype',
+                ]
+            )
+            ->addIndex(
+                [
+                    'tank_id',
+                    'date',
+                    'battletype',
+                ]
+            )
+            ->addIndex(
+                [
+                    'date',
+                    'date_b',
+                ]
+            )
+            ->create();
+
+        $this->table('statistics_old', ['id' => false, 'primary_key' => ['player_id', 'tank_id', 'date', 'battletype']])
+            ->addColumn('player_id', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('tank_id', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('date', 'date', [
+                'default' => null,
+                'limit' => null,
+                'null' => false,
+            ])
+            ->addColumn('battletype', 'string', [
+                'default' => null,
+                'limit' => 255,
+                'null' => false,
+            ])
+            ->addColumn('damage', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('spotted', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('frags', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('droppedCapturePoints', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('battle', 'integer', [
+                'default' => '0',
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('win', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('in_garage', 'integer', [
+                'default' => '0',
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('modified', 'datetime', [
+                'default' => null,
+                'limit' => null,
+                'null' => false,
+            ])
+            ->addColumn('created', 'datetime', [
+                'default' => null,
+                'limit' => null,
+                'null' => false,
+            ])
+            ->addColumn('shots', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('xp', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('hits', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('survived', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addColumn('tanking', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addIndex(
+                [
+                    'date',
+                ]
+            )
+            ->addIndex(
+                [
+                    'player_id',
+                    'tank_id',
+                    'battletype',
+                ]
+            )
+            ->addIndex(
+                [
+                    'player_id',
+                    'date',
+                    'battletype',
+                ]
+            )
+            ->addIndex(
+                [
+                    'tank_id',
+                    'date',
+                    'battletype',
+                ]
+            )
             ->create();
 
         $this->table('tanks')
@@ -518,7 +708,7 @@ class Initial extends AbstractMigration
             ->addColumn('user_id', 'integer', [
                 'default' => null,
                 'limit' => 11,
-                'null' => true,
+                'null' => false,
             ])
             ->addColumn('modified', 'datetime', [
                 'default' => null,
@@ -582,12 +772,14 @@ class Initial extends AbstractMigration
         $this->table('clans')->drop()->save();
         $this->table('inactives')->drop()->save();
         $this->table('meetingparticipants')->drop()->save();
+        $this->table('meetingregistrations')->drop()->save();
         $this->table('meetings')->drop()->save();
         $this->table('players')->drop()->save();
         $this->table('ranks')->drop()->save();
         $this->table('raws')->drop()->save();
         $this->table('sessions')->drop()->save();
         $this->table('statistics')->drop()->save();
+        $this->table('statistics_old')->drop()->save();
         $this->table('tanks')->drop()->save();
         $this->table('tanktypes')->drop()->save();
         $this->table('teamspeaks')->drop()->save();
