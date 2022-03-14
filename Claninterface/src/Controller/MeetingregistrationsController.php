@@ -21,7 +21,7 @@ class MeetingregistrationsController extends AppController
        if($registrations->count()){
            $registration = $registrations->first();
        }else{
-           $registration = $this->Meetingregistrations->newEntity();
+           $registration = $this->Meetingregistrations->newEmptyEntity();
            $registration->player_id = $player;
            $registration->meeting_id = $meeting;
        }

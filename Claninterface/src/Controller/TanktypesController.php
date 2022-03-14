@@ -48,7 +48,7 @@ class TanktypesController extends AppController
      */
     public function add()
     {
-        $tanktype = $this->Tanktypes->newEntity();
+        $tanktype = $this->Tanktypes->newEmptyEntity();
         if ($this->request->is('post')) {
             $tanktype = $this->Tanktypes->patchEntity($tanktype, $this->request->getData());
             if ($this->Tanktypes->save($tanktype)) {
@@ -113,7 +113,7 @@ class TanktypesController extends AppController
         return false;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
     }

@@ -126,7 +126,7 @@ class TeamspeaksController extends AppController
         return false;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
     }

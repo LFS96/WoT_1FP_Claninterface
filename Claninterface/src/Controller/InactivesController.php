@@ -57,7 +57,7 @@ class InactivesController extends AppController
             $player = $this->Inactives->Players->find("all")->where(["nick"=>$data['player']])->first();
 
            if($player != null) {
-               $inactive = $this->Inactives->newEntity();
+               $inactive = $this->Inactives->newEmptyEntity();
                $inactive->player_id = $player->id;
                $inactive->battle = (new WarGamingHelper)->getBattleCount($player->id);
                $inactive->reason = $data['reason'];
@@ -147,7 +147,7 @@ class InactivesController extends AppController
 
         return false;
     }
-    public function initialize()
+    public function initialize() :void
     {
         parent::initialize();
         // Add the 'add' action to the allowed actions list.

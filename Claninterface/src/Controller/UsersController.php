@@ -55,7 +55,7 @@ class UsersController extends AppController
      */
     public function add()
     {
-        $user = $this->Users->newEntity();
+        $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData(), ['fields' => ['name', 'email', 'password']]);#
 
@@ -264,7 +264,7 @@ class UsersController extends AppController
 
     public function unlock()
     {
-        $user = $this->Users->newEntity();
+        $user = $this->Users->newEmptyEntity();
         if ($this->request->is(['patch', 'post', 'put'])) {
             $accounts = $this->Users->find("all")->where(["email" => $this->request->getData("email"), "email LIKE"=> "%@%"]);
             if ($accounts->count() >= 1) {
@@ -326,7 +326,7 @@ class UsersController extends AppController
         return false;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         // Add the 'add' action to the allowed actions list.

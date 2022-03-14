@@ -63,8 +63,8 @@ return [
         'jsBaseUrl' => 'js/',
         'paths' => [
             'plugins' => [ROOT . DS . 'plugins' . DS],
-            'templates' => [APP . 'Template' . DS],
-            'locales' => [APP . 'Locale' . DS],
+            'templates' => [ROOT . DS . 'templates' . DS],
+            'locales' => [RESOURCES . 'locales' . DS],
         ],
     ],
 
@@ -99,7 +99,7 @@ return [
         'default' => [
             'className' => FileEngine::class,
             'path' => CACHE,
-            'url' => env('CACHE_DEFAULT_URL', null),
+            'url' => env('CACHE_DEFAULT_URL'),
         ],
 
         /*
@@ -114,7 +114,7 @@ return [
             'path' => CACHE . 'persistent/',
             'serialize' => true,
             'duration' => '+1 years',
-            'url' => env('CACHE_CAKECORE_URL', null),
+            'url' => env('CACHE_CAKECORE_URL'),
         ],
 
         /*
@@ -129,7 +129,7 @@ return [
             'path' => CACHE . 'models/',
             'serialize' => true,
             'duration' => '+1 years',
-            'url' => env('CACHE_CAKEMODEL_URL', null),
+            'url' => env('CACHE_CAKEMODEL_URL'),
         ],
 
         /*
@@ -143,7 +143,7 @@ return [
             'path' => CACHE,
             'serialize' => true,
             'duration' => '+1 years',
-            'url' => env('CACHE_CAKEROUTES_URL', null),
+            'url' => env('CACHE_CAKEROUTES_URL'),
         ],
     ],
 
@@ -220,7 +220,7 @@ return [
             //'password' => null,
             'client' => null,
             'tls' => false,
-            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
+            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL'),
         ],
     ],
 
@@ -304,7 +304,7 @@ return [
              */
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
 
-            'url' => env('DATABASE_URL', null),
+            'url' => env('DATABASE_URL'),
         ],
 
         /*
@@ -325,7 +325,7 @@ return [
             'quoteIdentifiers' => false,
             'log' => false,
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
-            'url' => env('DATABASE_TEST_URL', null),
+            'url' => env('DATABASE_TEST_URL'),
         ],
     ],
 
@@ -337,7 +337,7 @@ return [
             'className' => FileLog::class,
             'path' => LOGS,
             'file' => 'debug',
-            'url' => env('LOG_DEBUG_URL', null),
+            'url' => env('LOG_DEBUG_URL'),
             'scopes' => false,
             'levels' => ['notice', 'info', 'debug'],
         ],
@@ -345,7 +345,7 @@ return [
             'className' => FileLog::class,
             'path' => LOGS,
             'file' => 'error',
-            'url' => env('LOG_ERROR_URL', null),
+            'url' => env('LOG_ERROR_URL'),
             'scopes' => false,
             'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
         ],
@@ -354,7 +354,7 @@ return [
             'className' => FileLog::class,
             'path' => LOGS,
             'file' => 'queries',
-            'url' => env('LOG_QUERIES_URL', null),
+            'url' => env('LOG_QUERIES_URL'),
             'scopes' => ['queriesLog'],
         ],
     ],

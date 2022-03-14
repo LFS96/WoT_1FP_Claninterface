@@ -65,7 +65,7 @@ class PagesController extends AppController
             throw new NotFoundException();
         }
     }
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         // Add the 'add' action to the allowed actions list.

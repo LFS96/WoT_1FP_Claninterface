@@ -47,7 +47,7 @@ class RanksController extends AppController
      */
     public function add()
     {
-        $rank = $this->Ranks->newEntity();
+        $rank = $this->Ranks->newEmptyEntity();
         if ($this->request->is('post')) {
             $rank = $this->Ranks->patchEntity($rank, $this->request->getData());
             if ($this->Ranks->save($rank)) {
@@ -120,7 +120,7 @@ class RanksController extends AppController
         return false;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
     }

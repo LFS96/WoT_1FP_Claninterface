@@ -86,7 +86,7 @@ class PlayersController extends AppController
         $this->set("js_player_array", $js_player_array);
         //</editor-fold>
 
-        $this->set("form", $this->Players->newEntity());
+        $this->set("form", $this->Players->newEmptyEntity());
         if ($this->request->is(['patch', 'post', 'put'])) {
             $data = $this->request->getData();
 
@@ -180,7 +180,7 @@ class PlayersController extends AppController
         return false;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         // Add the 'add' action to the allowed actions list.

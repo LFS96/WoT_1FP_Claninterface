@@ -34,7 +34,7 @@ class AppView extends UIView
      *
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         $this->setLayout("bootstrap_default");

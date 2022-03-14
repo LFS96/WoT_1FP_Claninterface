@@ -1,5 +1,8 @@
 <?php
 
+use Wargaming\Language\DE;
+use Wargaming\Server\EU;
+
 return [
     /*
      * Information where to find the Teamspeak
@@ -40,8 +43,8 @@ return [
     "Wargaming" => [
         "authkey" => '0123456789abcdef0123456789abcdef',
         'expectedValues' => 'https://static.modxvm.com/wn8-data-exp/json/wn8exp.json',
-        'lang' => (new \Wargaming\Language\DE()),
-        'server' => (new \Wargaming\Server\EU(""))
+        'lang' => (new DE()),
+        'server' => (new EU(""))
     ],
     /*
      * Einstellungen zu Spielerdaten

@@ -51,11 +51,11 @@ class TankDataHelper
                 try {
                     $tank = $TanksTable->get($data->tank_id);
                 } catch (\Exception $exception) {
-                    $tank = $TanksTable->newEntity();
+                    $tank = $TanksTable->newEmptyEntity();
                     $tank->id = $data->tank_id;
                 }
             }else{
-                $tank = $TanksTable->newEntity();
+                $tank = $TanksTable->newEmptyEntity();
                 $tank->id = $data->tank_id;
             }
             $tank->name = $data->name;
@@ -90,7 +90,7 @@ class TankDataHelper
             //ADD Missing Type
             /** @var TanktypesTable $TypesTable */
             $TypesTable = TableRegistry::getTableLocator()->get('Tanktypes');
-            $type = $TypesTable->newEntity();
+            $type = $TypesTable->newEmptyEntity();
             $type->name =$searchedType;
             $TypesTable->save($type);
 

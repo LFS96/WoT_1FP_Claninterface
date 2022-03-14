@@ -25,7 +25,7 @@ class MeetingsHelper
          */
         foreach ($running as $meeting){
 
-            $newMeeting = $MeetingsTable->newEntity($meeting->toArray());
+            $newMeeting = $MeetingsTable->newEmptyEntity()($meeting->toArray());
             unset($newMeeting->created);
             unset($newMeeting->id);
             $newMeeting->date = $newMeeting->date->addDay(7);
@@ -71,7 +71,7 @@ class MeetingsHelper
                              $participant->channel .= ", ".$item['channel'];
                          }
                      }else{
-                         $participant = $ParticipantsTable->newEntity();
+                         $participant = $ParticipantsTable->newEmptyEntity();
                          $participant->meeting_id = $meeting->id;
                          $participant->player_id = $item['id'];
                          $participant->joined = Time::now();

@@ -49,7 +49,7 @@ class ClansController extends AppController
      */
     public function add()
     {
-        $clan = $this->Clans->newEntity();
+        $clan = $this->Clans->newEmptyEntity();
         if ($this->request->is('post')) {
             $clan = $this->Clans->patchEntity($clan, $this->request->getData(),['fields' => ['short']]);
             $WgApi = new WarGamingHelper();
@@ -151,7 +151,7 @@ class ClansController extends AppController
         return false;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         // Add the 'add' action to the allowed actions list.

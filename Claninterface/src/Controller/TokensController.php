@@ -52,7 +52,7 @@ class TokensController extends AppController
      */
     public function add()
     {
-        $token = $this->Tokens->newEntity();
+        $token = $this->Tokens->newEmptyEntity();
         if ($this->request->is('post')) {
             $token = $this->Tokens->patchEntity($token, $this->request->getData());
             if ($this->Tokens->save($token)) {
@@ -121,7 +121,7 @@ class TokensController extends AppController
         if($data["status"] != "error"){
 
             // var_dump($data);
-            $token = $this->Tokens->newEntity();
+            $token = $this->Tokens->newEmptyEntity();
             $token->player_id = $data["account_id"];
             $token->nickname = $data["nickname"];
             $token->token = $data["access_token"];
@@ -153,7 +153,7 @@ class TokensController extends AppController
             if($users->count()){
                 $user = $users->first();
             }else {
-                $user = $this->Tokens->Users->newEntity();
+                $user = $this->Tokens->Users->newEmptyEntity();
                 $user->name = "WG_" . $data["nickname"];
                 $user->email = $email;
                 $user->password = StringHelper::generateRandomString(32);
@@ -162,7 +162,7 @@ class TokensController extends AppController
                 $this->Tokens->Users->save($user);
             }
 
-            $token = $this->Tokens->newEntity();
+            $token = $this->Tokens->newEmptyEntity();
             $token->player_id = $data["account_id"];
             $token->nickname = $data["nickname"];
             $token->token = $data["access_token"];
@@ -194,7 +194,7 @@ class TokensController extends AppController
         }
         return false;
     }
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         // Add the 'add' action to the allowed actions list.

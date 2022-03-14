@@ -132,7 +132,7 @@ class WarGamingHelper
                     $player = $players->first();
                 } else {
                     //neuer Player
-                    $player = $PlayersTable->newEntity();
+                    $player = $PlayersTable->newEmptyEntity();
                     $player->id = $member->account_id;
 
                 }

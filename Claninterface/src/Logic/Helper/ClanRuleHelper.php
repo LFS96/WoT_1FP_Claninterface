@@ -77,7 +77,7 @@ class ClanRuleHelper
                 //Spieler ist offline ohne TS (neuer Eintrag)
                 if($TSTable->find("all")->where(["end <" => "1970-01-02", "player_id"=>$player->id])->count() == 0){
                     /** @var Teamspeak $tsOffline */
-                    $tsOffline = $TSTable->newEntity();
+                    $tsOffline = $TSTable->newEmptyEntity();
                     $tsOffline->player_id = $player->id;
                     $tsOffline->start = new \DateTime();
                     $tsOffline->end = new \DateTime('1970-01-01');

@@ -34,6 +34,8 @@ use Cake\Console\ConsoleErrorHandler;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Database\Type;
+use Cake\Database\Type\StringType;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\ErrorHandler;
 use Cake\Http\ServerRequest;
@@ -42,6 +44,7 @@ use Cake\Mailer\Email;
 use Cake\Mailer\TransportFactory;
 use Cake\Utility\Inflector;
 use Cake\Utility\Security;
+use Detection\MobileDetect;
 
 /*
  * Uncomment block of code below if you want to use `.env` file during development.
@@ -71,7 +74,7 @@ use Cake\Utility\Security;
 try {
     Configure::config('default', new PhpConfig());
     Configure::load('app', 'default', false);
-} catch (\Exception $e) {
+} catch (Exception $e) {
     exit($e->getMessage() . "\n");
 }
 
@@ -80,21 +83,21 @@ try {
  * Notice: For security reasons app_local.php will not be included in your git repo.
  */
 if (file_exists(CONFIG . 'app_local.php')) {
-    Configure::load('app_local', 'default');
+    Configure::load('app_local');
 }
 
 //Used in manual deployment
 if (file_exists(CONFIG . 'external_api.php')) {
-    Configure::load('external_api', 'default');
+    Configure::load('external_api');
 }
 if (file_exists(CONFIG . 'clan_settings.php')) {
-    Configure::load('clan_settings', 'default');
+    Configure::load('clan_settings');
 }
 
 // TODO: Combine both Deployment ways
 //Used in deplyment with docker
 if (file_exists(CONFIG . 'docker.php')) {
-    Configure::load('docker', 'default');
+    Configure::load('docker');
 }
 
 
@@ -180,32 +183,41 @@ Security::setSalt(Configure::consume('Security.salt'));
  * Setup detectors for mobile and tablet.
  */
 ServerRequest::addDetector('mobile', function ($request) {
-    $detector = new \Detection\MobileDetect();
+    $detector = new MobileDetect();
 
     return $detector->isMobile();
 });
 ServerRequest::addDetector('tablet', function ($request) {
-    $detector = new \Detection\MobileDetect();
+    $detector = new MobileDetect();
 
     return $detector->isTablet();
 });
 
 /*
- * Enable immutable time objects in the ORM.
- *
  * You can enable default locale format parsing by adding calls
  * to `useLocaleParser()`. This enables the automatic conversion of
  * locale specific date formats. For details see
- * @link https://book.cakephp.org/3/en/core-libraries/internationalization-and-localization.html#parsing-localized-datetime-data
+ * @link https://book.cakephp.org/4/en/core-libraries/internationalization-and-localization.html#parsing-localized-datetime-data
  */
-Type::build('time')
-    ->useImmutable();
-Type::build('date')
-    ->useImmutable();
-Type::build('datetime')
-    ->useImmutable();
-Type::build('timestamp')
-    ->useImmutable();
+// \Cake\Database\TypeFactory::build('time')
+//    ->useLocaleParser();
+// \Cake\Database\TypeFactory::build('date')
+//    ->useLocaleParser();
+// \Cake\Database\TypeFactory::build('datetime')
+//    ->useLocaleParser();
+// \Cake\Database\TypeFactory::build('timestamp')
+//    ->useLocaleParser();
+// \Cake\Database\TypeFactory::build('datetimefractional')
+//    ->useLocaleParser();
+// \Cake\Database\TypeFactory::build('timestampfractional')
+//    ->useLocaleParser();
+// \Cake\Database\TypeFactory::build('datetimetimezone')
+//    ->useLocaleParser();
+// \Cake\Database\TypeFactory::build('timestamptimezone')
+//    ->useLocaleParser();
+
+// There is no time-specific type in Cake
+TypeFactory::map('time', StringType::class);
 
 /*
  * Custom Inflector rules, can be set to correctly pluralize or singularize
@@ -215,4 +227,3 @@ Type::build('timestamp')
 //Inflector::rules('plural', ['/^(inflect)or$/i' => '\1ables']);
 //Inflector::rules('irregular', ['red' => 'redlings']);
 //Inflector::rules('uninflected', ['dontinflectme']);
-//Inflector::rules('transliteration', ['/å/' => 'aa']);

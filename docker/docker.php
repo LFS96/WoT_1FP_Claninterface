@@ -1,5 +1,8 @@
 <?php
 
+use Wargaming\Language\DE;
+use Wargaming\Server\EU;
+
 return [
     /*
      * Debug Level:
@@ -35,7 +38,7 @@ return [
             /*
              * You can use a DSN string to set the entire configuration
              */
-            'url' => env('DATABASE_URL', null),
+            'url' => env('DATABASE_URL'),
         ],
     ],
 
@@ -50,10 +53,10 @@ return [
         'default' => [
             'host' => env("EMAIL_HOST",'localhost'),
             'port' => env("EMAIL_USER",25),
-            'username' => env("EMAIL_USER",null),
-            'password' => env("EMAIL_PASS",null),
-            'client' => env("EMAIL_CLIENT",null),
-            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
+            'username' => env("EMAIL_USER"),
+            'password' => env("EMAIL_PASS"),
+            'client' => env("EMAIL_CLIENT"),
+            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL'),
         ],
     ],
 
@@ -97,8 +100,8 @@ return [
     "Wargaming" => [
         "authkey" => '0123456789abcdef0123456789abcdef',
         'expectedValues' => 'https://static.modxvm.com/wn8-data-exp/json/wn8exp.json',
-        'lang' => (new \Wargaming\Language\DE()),
-        'server' => (new \Wargaming\Server\EU(""))
+        'lang' => (new DE()),
+        'server' => (new EU(""))
     ],
     /*
      * Einstellungen zu Spielerdaten

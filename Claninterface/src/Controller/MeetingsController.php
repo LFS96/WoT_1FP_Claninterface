@@ -51,7 +51,7 @@ class MeetingsController extends AppController
      */
     public function add()
     {
-        $meeting = $this->Meetings->newEntity();
+        $meeting = $this->Meetings->newEmptyEntity();
         if ($this->request->is('post')) {
             $meeting = $this->Meetings->patchEntity($meeting, $this->request->getData());
             if ($this->Meetings->save($meeting)) {
@@ -184,7 +184,7 @@ class MeetingsController extends AppController
         return false;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         // Add the 'add' action to the allowed actions list.

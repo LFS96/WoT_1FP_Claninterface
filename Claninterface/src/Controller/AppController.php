@@ -15,6 +15,8 @@
 namespace App\Controller;
 
 use App\Logic\Helper\RightsHelper;
+use Authentication\Controller\Component\AuthenticationComponent;
+use Authorization\Controller\Component\AuthorizationComponent;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
@@ -24,7 +26,8 @@ use Cake\ORM\TableRegistry;
  *
  * Add your application-wide methods in the class below, your controllers
  * will inherit them.
- *
+ * @property AuthorizationComponent $Authorization
+ * @property AuthenticationComponent $Authentication
  * @link https://book.cakephp.org/3/en/controllers.html#the-app-controller
  */
 class AppController extends Controller
@@ -40,43 +43,21 @@ class AppController extends Controller
      *
      * @return void
      */
-    public function initialize()
+    public function initialize() :void
     {
         parent::initialize();
 
-
-
-        $this->loadComponent('RequestHandler', [
-            'enableBeforeRedirect' => false,
-        ]);
+        $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
 
         /*
-         * Enable the following component for recommended CakePHP security settings.
-         * see https://book.cakephp.org/3/en/controllers/components/security.html
+         * Enable the following component for recommended CakePHP form protection settings.
+         * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
          */
-        //$this->loadComponent('Security');
-        $this->loadComponent('Auth', [
-            'authenticate' => [
-                'Form' => [
-                    'fields' => [
-                        'username' => 'email',
-                        'password' => 'password'
-                    ]
-                ]
-            ],
-            'loginAction' => [
-                'controller' => 'Users',
-                'action' => 'login'
-            ],
-            'loginRedirect' => array(
-                'controller' => 'users',
-                'action' => 'dashboard'
-            ),
-            'authorize' => array('Controller'), // <- here
-            // If unauthorized, return them to page they were just on
-            'unauthorizedRedirect' => $this->referer()
-        ]);
+        //$this->loadComponent('FormProtection');
+        $this->loadComponent('Authentication.Authentication');
+        $this->loadComponent('Authorization.Authorization');
+
         $rh = new RightsHelper($this->Auth->user("id"));
 
         $this->permissionLevel = $rh->getPermissionLevel();

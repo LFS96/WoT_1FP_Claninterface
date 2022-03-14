@@ -47,7 +47,7 @@ return [
             'password' => 'secret',
             'database' => 'my_app',
             'log' => true,
-            'url' => env('DATABASE_URL', null),
+            'url' => env('DATABASE_URL'),
         ],
     ],
 
@@ -65,7 +65,7 @@ return [
             'username' => null,
             'password' => null,
             'client' => null,
-            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
+            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL'),
         ],
     ],
 
