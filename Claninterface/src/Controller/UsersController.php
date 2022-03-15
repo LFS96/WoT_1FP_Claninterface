@@ -124,12 +124,13 @@ class UsersController extends AppController
 
     public function dashboard()
     {
+        $this->Authorization->can($this->LoggedInUsers, "Member");
         $UserIsAdmin = false;
-        if ($this->Auth->user("admin")) {
+        if ($this->LoggedInUsers->admin) {
             $UserIsAdmin = true;
         }
 
-        $token = $this->Users->Tokens->find("all")->contain(["players"])->where(['user_id' => $this->Auth->user("id"), 'Players.rank_id <=' => 2]);
+        $token = $this->Users->Tokens->find("all")->contain(["Players"])->where(['user_id' => $this->LoggedInUsers->id, 'Players.rank_id <=' => 2]);
         if ($token->count()) {
             $UserIsAdmin = true;
         }
@@ -144,11 +145,11 @@ class UsersController extends AppController
                 "rankIcon" => "Ranks.name",
                 "expires" => "max(Tokens.expires)"
             ])
-            ->innerJoinWith("tokens")
+            ->innerJoinWith("Tokens")
             ->innerJoinWith("Ranks")
             ->innerJoinWith("Clans")
             ->where([
-                'Tokens.user_id' => $this->Auth->user("id"),
+                'Tokens.user_id' => $this->LoggedInUsers->id,
                 "Tokens.expires >" => $players->func()->now()
             ])
             ->group("Players.id")
@@ -189,21 +190,31 @@ class UsersController extends AppController
 
     public function login()
     {
-        if ($this->request->is('post')) {
-            $user = $this->Auth->identify();
-            if ($user) {
-                $this->Auth->setUser($user);
-                return $this->redirect($this->Auth->redirectUrl());
-            }
-            $this->Flash->error('Your username or password is incorrect.');
+        $this->Authorization->skipAuthorization();
+        $this->request->allowMethod(['get', 'post']);
+        $result = $this->Authentication->getResult();
+        // regardless of POST or GET, redirect if user is logged in
+        if ($result->isValid()) {
+            // redirect to /articles after login success
+            $target =  ['controller' => 'Users','action' => 'dashboard'];
+            return $this->redirect($target);
+        }
+        // display error if user submitted and authentication failed
+        if ($this->request->is('post') && !$result->isValid()) {
+            $this->Flash->error(__('Invalid username or password'));
         }
 
     }
 
     public function logout()
     {
-        $this->Flash->success('You are now logged out.');
-        return $this->redirect($this->Auth->logout());
+        $this->Authorization->skipAuthorization();
+        $result = $this->Authentication->getResult();
+        // regardless of POST or GET, redirect if user is logged in
+        if ($result->isValid()) {
+            $this->Authentication->logout();
+            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        }
     }
 
     public function newpass()
@@ -326,10 +337,11 @@ class UsersController extends AppController
         return false;
     }
 
-    public function initialize(): void
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
-        parent::initialize();
-        // Add the 'add' action to the allowed actions list.
-        $this->Auth->allow(['logout', 'add', 'unlock']);
+        parent::beforeFilter($event);
+        // Configure the login action to not require authentication, preventing
+        // the infinite redirect loop issue
+        $this->Authentication->addUnauthenticatedActions(['logout', 'add', 'login']);
     }
 }

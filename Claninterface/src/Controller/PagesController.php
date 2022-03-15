@@ -40,6 +40,7 @@ class PagesController extends AppController
      */
     public function display(...$path)
     {
+        $this->Authorization->skipAuthorization();
         if (!$path) {
             return $this->redirect('/');
         }
@@ -65,10 +66,12 @@ class PagesController extends AppController
             throw new NotFoundException();
         }
     }
-    public function initialize(): void
+
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
-        parent::initialize();
-        // Add the 'add' action to the allowed actions list.
-        $this->Auth->allow(['display']);
+        parent::beforeFilter($event);
+        // Configure the login action to not require authentication, preventing
+        // the infinite redirect loop issue
+        $this->Authentication->addUnauthenticatedActions(['display']);
     }
 }

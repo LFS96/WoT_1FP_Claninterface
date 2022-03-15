@@ -49,6 +49,7 @@ class InactivesController extends AppController
      */
     public function add()
     {
+        $this->Authorization->skipAuthorization();
         $inactivesForm = new InactivesForm();
 
         if ($this->request->is('post')) {
@@ -147,10 +148,11 @@ class InactivesController extends AppController
 
         return false;
     }
-    public function initialize() :void
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
-        parent::initialize();
-        // Add the 'add' action to the allowed actions list.
-        $this->Auth->allow(['add']);
+        parent::beforeFilter($event);
+        // Configure the login action to not require authentication, preventing
+        // the infinite redirect loop issue
+        $this->Authentication->addUnauthenticatedActions(['add']);
     }
 }

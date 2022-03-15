@@ -73,6 +73,7 @@ class PlayersController extends AppController
     }
     public function tsRank()
     {
+        $this->Authorization->skipAuthorization();
         //<editor-fold desc="Spieler">
         $players = $this->Players->find("all");
         $players->where(function (QueryExpression $exp, Query $q) {
@@ -106,6 +107,7 @@ class PlayersController extends AppController
 
     }
     public function tree(){
+
         $wgh = new WarGamingHelper();
         $players = $this->Players->find("all")->contain(["Clans"]);
 
@@ -180,10 +182,11 @@ class PlayersController extends AppController
         return false;
     }
 
-    public function initialize(): void
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
-        parent::initialize();
-        // Add the 'add' action to the allowed actions list.
-        $this->Auth->allow(['tsRank']);
+        parent::beforeFilter($event);
+        // Configure the login action to not require authentication, preventing
+        // the infinite redirect loop issue
+        $this->Authentication->addUnauthenticatedActions(['tsRank']);
     }
 }

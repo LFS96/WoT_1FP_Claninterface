@@ -20,8 +20,8 @@ Dein Rang kann unter umständen von diesem Rang hier abweichen, frag dazu bitte 
 Bist du noch keine 24 Stunden im Clan ist diese Funktion möglicherweise nicht verfügbar.<br />
 <br />
 <?= $this->Form->create($form) ?>
-<?=  $this->Form->control('player', ['id' => 'player', 'label' => 'WoT Nickname eintragen:', 'type' => 'Text']);?>
-<?= $this->Form->button('<i class="bi bi-cloud-download"></i> Rang abrufen',['escape' => false,"class"=>"btn btn-primary"]) ?>
+<?= $this->Form->control('player', ['id' => 'player', 'label' => 'WoT Nickname eintragen:', 'type' => 'Text']);?>
+<?= $this->Form->button('<i class="bi bi-cloud-download"></i> Rang abrufen',['escapeTitle' => false,"class"=>"btn btn-primary"]) ?>
 <?= $this->Form->end() ?>
 <?php if(isset($days)): ?>
 <hr />

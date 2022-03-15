@@ -15,6 +15,7 @@
 namespace App\Controller;
 
 use App\Logic\Helper\RightsHelper;
+use App\Model\Entity\User;
 use Authentication\Controller\Component\AuthenticationComponent;
 use Authorization\Controller\Component\AuthorizationComponent;
 use Cake\Controller\Controller;
@@ -32,8 +33,10 @@ use Cake\ORM\TableRegistry;
  */
 class AppController extends Controller
 {
-
+    /** @var null|int $permissionLevel */
     protected $permissionLevel = null;
+    /** @var null|User $LoggedInUsers */
+    protected $LoggedInUsers = null;
     /**
      * Initialization hook method.
      *
@@ -58,11 +61,24 @@ class AppController extends Controller
         $this->loadComponent('Authentication.Authentication');
         $this->loadComponent('Authorization.Authorization');
 
-        $rh = new RightsHelper($this->Auth->user("id"));
+        $DESIGN_User = false;
+        if ($this->Authentication->getIdentity()?->getIdentifier()) {
+            $DESIGN_isLoggedIn = true;
+            $DESIGN_Ident = $this->Authentication->getIdentity();
+            $UsersTables = TableRegistry::getTableLocator()->get('Users');
+            $DESIGN_User = $UsersTables->get($DESIGN_Ident->getIdentifier());
 
-        $this->permissionLevel = $rh->getPermissionLevel();
+
+
+            $rh = new RightsHelper($DESIGN_Ident->getIdentifier());
+            $this->permissionLevel = $rh->getPermissionLevel();
+            $this->LoggedInUsers = $DESIGN_User;
+
+        }
+
+
         $this->set("permissionLevel", $this->permissionLevel);
-        $this->set("auth",$this->Auth->user());
+        $this->set("auth",$DESIGN_User);
 
     }
     public function isAuthorized($user)
