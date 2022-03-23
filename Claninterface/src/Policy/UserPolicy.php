@@ -27,7 +27,7 @@ class UserPolicy
     public function canAdmin(IdentityInterface $user, User $resource)
     {
         $this->checkUser($resource);
-        return $this->rightsHelper->getPermissionLevel() >= 10;
+        return $this->rightsHelper->isAdmin;
     }
     /**
      * Check if $user can add User
@@ -48,7 +48,7 @@ class UserPolicy
      * @param \App\Model\Entity\User $resource
      * @return bool
      */
-    public function canFieldComander(IdentityInterface $user, User $resource)
+    public function canFieldCommander(IdentityInterface $user, User $resource)
     {
         $this->checkUser($resource);
         return $this->rightsHelper->isFieldCommander;
@@ -61,6 +61,18 @@ class UserPolicy
      * @return bool
      */
     public function canPersonal(IdentityInterface $user, User $resource)
+    {
+        $this->checkUser($resource);
+        return $this->rightsHelper->isPersonal;
+    }
+    /**
+     * Check if $user can add User
+     *
+     * @param \Authorization\IdentityInterface $user The user.
+     * @param \App\Model\Entity\User $resource
+     * @return bool
+     */
+    public function canOfficer(IdentityInterface $user, User $resource)
     {
         $this->checkUser($resource);
         return $this->rightsHelper->isPersonal;

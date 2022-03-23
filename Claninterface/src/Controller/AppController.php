@@ -63,22 +63,21 @@ class AppController extends Controller
 
         $DESIGN_User = false;
         if ($this->Authentication->getIdentity()?->getIdentifier()) {
-            $DESIGN_isLoggedIn = true;
             $DESIGN_Ident = $this->Authentication->getIdentity();
             $UsersTables = TableRegistry::getTableLocator()->get('Users');
             $DESIGN_User = $UsersTables->get($DESIGN_Ident->getIdentifier());
 
-
-
             $rh = new RightsHelper($DESIGN_Ident->getIdentifier());
-         //   $this->permissionLevel = $rh->getPermissionLevel();
             $this->LoggedInUsers = $DESIGN_User;
 
         }
 
+        $this->set("user", $DESIGN_Ident);
+        $this->set("rights", $rh??null);
+        $this->set("auth",$this->LoggedInUsers);
 
-      //  $this->set("permissionLevel", $this->permissionLevel);
-        $this->set("auth",$DESIGN_User);
+
+
 
     }
     public function isAuthorized($user)

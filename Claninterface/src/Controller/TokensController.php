@@ -117,6 +117,7 @@ class TokensController extends AppController
      */
     public function receive(): ?\Cake\Http\Response
     {
+        $this->Authorization->skipAuthorization();
         $data = $this->request->getParam('?');
         if($data["status"] != "error"){
 
@@ -126,7 +127,7 @@ class TokensController extends AppController
             $token->nickname = $data["nickname"];
             $token->token = $data["access_token"];
             $token->expires = \DateTime::createFromFormat('U', $data["expires_at"]);
-            $token->user_id = $this->Auth->user('id');
+            $token->user_id = $this->LoggedInUsers->id;
             $saved = $this->Tokens->save($token);
             if ($saved) {
                 $this->Flash->success("Wir haben den Token gespeichert.");
@@ -194,10 +195,5 @@ class TokensController extends AppController
         }
         return false;
     }
-    public function initialize(): void
-    {
-        parent::initialize();
-        // Add the 'add' action to the allowed actions list.
-        $this->Auth->allow(['login']);
-    }
+
 }

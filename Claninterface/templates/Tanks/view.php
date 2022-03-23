@@ -4,6 +4,8 @@
  * @var Tank $tank
  * @var Statistic[] $stats
  * @var string $battletype
+ * @var \Authorization\Controller\Component\AuthorizationComponent $user
+ * @var \App\Model\Entity\User $auth
  */
 
 use App\Logic\Config\StatisticsConfigHelper;
@@ -15,8 +17,13 @@ use App\View\AppView;
 
 ?>
 <?= $this->Html->link(__('<i class="bi bi-chevron-left"></i> Zurück'), ['action' => 'index'],["class" => "btn btn-dark btn-sm", "escape" => false]) ?>
-<?php foreach (StatisticsConfigHelper::$BattleTypesNames as $name => $val): ?>
-    <?= $this->Html->link($name,["action"=>"view",$tank->id, $val],["class"=>"btn btn-secondary btn-sm"]) ?>
+<?php foreach (StatisticsConfigHelper::$BattleTypesNames as $name => $val):
+    $btn_class = $battletype== $val?"btn btn-info btn-sm":"btn btn-secondary btn-sm";
+    ?>
+
+
+
+    <?= $this->Html->link($name,["action"=>"view",$tank->id, $val],["class"=>$btn_class]) ?>
 <?php endforeach; ?>
 
 <br />
@@ -72,6 +79,11 @@ use App\View\AppView;
 </div>
 <div >
     <h4>Spieler Statistik &ndash; <?= array_search($battletype, StatisticsConfigHelper::$BattleTypesNames) ?></h4>
+    <?php if($battletype != StatisticsConfigHelper::$BattleTypes[0]): ?>
+    <small class="text-warning">
+        ** WN8 ist in diesem Gefechtstyp eventuell nicht aussagekräftig **
+    </small>
+    <?php endif; ?>
     <table class="table DataTable table-striped table-sm">
         <thead>
         <tr>
@@ -93,14 +105,14 @@ use App\View\AppView;
         ?>
 
         <tr>
-            <td><?=$this->Html->link($stat->player->clan->short,["controller"=>"clans","action"=>"view", $stat->player->clan_id]) ?></td>
-            <td><?= $this->Html->link($stat->player->nick,["controller"=>"players","action"=>"view", $stat->player->id,$battletype]) ?></td>
+            <td><?= $user->can("FieldCommander",$auth)? $this->Html->link($stat->player->clan->short,["controller"=>"clans","action"=>"view", $stat->player->clan_id]):$stat->player->clan->short ?></td>
+            <td><?= $user->can("FieldCommander", $auth)? $this->Html->link($stat->player->nick,["controller"=>"players","action"=>"view", $stat->player->id,$battletype]): $stat->player->nick ?></td>
             <td data-sort="<?=  $stat->battle ?>"><?= $this->Number->format( $stat->battle  , ["locale" => 'de_DE']);?></td>
             <td data-sort="<?= $sieg ?>" class="<?= WN8Helper::SiegColor($sieg) ?>"><?= $this->Number->format( $sieg , ["locale" => 'de_DE', "precision"=>2]); ?></td>
             <td data-sort="<?= $stat->damage /$stat->battle ?>"><?=$this->Number->format(  $stat->damage /$stat->battle  , ["locale" => 'de_DE', "precision"=>2]);?></td>
             <td data-sort="<?= $stat->frags /$stat->battle ?>"><?= $this->Number->format( $stat->frags /$stat->battle  , ["locale" => 'de_DE', "precision"=>2]);?></td>
             <td data-sort="<?= $wn8 ?>" class="<?= WN8Helper::WnColor($wn8) ?>"><?= $this->Number->format( $wn8 , ["locale" => 'de_DE', "precision"=>2]);?></td>
-            <td><?= $this->Html->link('<i class="far fa-chart-bar"></i>',["controller"=>"players","action"=>"tankStats",$stat->player->id,$stat->tank->id, $battletype],["escape"=>false,"class"=>"btn btn-dark btn-sm"]) ?></td>
+            <td><?=  $user->can("FieldCommander", $auth)?  $this->Html->link('<i class="far fa-chart-bar"></i>',["controller"=>"players","action"=>"tankStats",$stat->player->id,$stat->tank->id, $battletype],["escape"=>false,"class"=>"btn btn-dark btn-sm"]):"" ?></td>
 
         </tr>
     <?php endforeach;?>

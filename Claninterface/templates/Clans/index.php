@@ -28,7 +28,7 @@ use Cake\Collection\CollectionInterface;
                         </div>
                         <div class="col-12">
                             <?= $this->Html->link('<i class="bi bi-info-circle"></i> Details', ['action' => 'view', $clan->id], ["class" => "btn btn-info btn-sm", "escape" => false]) ?>
-                            <?php if ($permissionLevel >= 10): ?>
+                            <?php if ($user->can("Admin",$auth)): ?>
                             <?= $this->Form->postLink('<i class="bi bi-graph-up"></i> Spieler Infos abrufen', ['action' => 'getClanMembers', $clan->id], ["class" => "btn btn-secondary  btn-sm", "escape" => false]) ?>
                             <?= $this->Form->postLink('<i class="bi bi-graph-up"></i> Spieler Statisticen abrufen', ["controller" => "players", 'action' => 'importStatistic', $clan->id], ["class" => "btn btn-secondary  btn-sm", "escape" => false]) ?>
                             <?= $this->Form->postLink('<i class="bi bi-cloud-arrow-down-fill"></i> Clandaten abrufen', ['action' => 'renew', $clan->id], ["class" => "btn btn-secondary  btn-sm", "escape" => false]) ?>

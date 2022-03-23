@@ -6,10 +6,13 @@
  * Time: 09:36
  *
  * @var AppView $this
- * @var int $permissionLevel
+ * @var RightsHelper|null $rights
+ * @var User|null $auth
  */
 
 
+use App\Logic\Helper\RightsHelper;
+use App\Model\Entity\User;
 use App\View\AppView;
 use Cake\Core\Configure;
 
@@ -44,14 +47,13 @@ $this->prepend('meta', $this->Html->meta(array('name' => 'robots', 'content' => 
 
 
 $isAuth = ($auth != null);
-$isAdmin = true;
 
 $isOnlyPlayer = false;
-
+$user = $this->request->getAttribute('identity');
 
 $container_class = "container";
-if(isset($container)){
-    $container_class  = $container;
+if (isset($container)) {
+    $container_class = $container;
 }
 
 ?>
@@ -90,20 +92,60 @@ if(isset($container)){
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <?php if ($isAuth == false): ?>
-            <?= $this->element('Nav/guest', []) ?>
-        <?php endif; ?>
-        <?php if ($isAuth == true): ?>
-            <?php if ($permissionLevel > 5): ?>
-                <?= $this->element('Nav/admin', ["permissionLevel", $permissionLevel ]) ?>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <?= $this->Html->link("Clans", ['controller' => 'Clans', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                </li>
+                <li class="nav-item">
+                    <?= $this->Html->link("Teamspeak", ['controller' => 'Teamspeaks', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                </li>
+                <li class="nav-item">
+                    <?= $this->Html->link("Abmeldungen", ['controller' => 'Inactives', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                </li>
+                <li class="nav-item">
+                    <?= $this->Html->link("Veranstaltung", ['controller' => 'Meetings', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Mehr
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <?= $this->Html->link("Panzer", ['controller' => 'Tanks', 'action' => 'index'], ["class" => "dropdown-item"]) ?>
+                        <?php if ($user->can("Commander", $auth)): ?>
+                        <?= $this->Html->link("Ränge", ['controller' => 'Ranks', 'action' => 'index'], ["class" => "dropdown-item"]) ?>
+                        <?php endif; ?>
+                        <?= $this->Html->link("TS3 Rang", ['controller' => 'Players', 'action' => 'tsRank'], ["class" => "dropdown-item"]) ?>
+                        <?= $this->Html->link("Auszeit nehmen",['controller' => 'Inactives', 'action' => 'add', 'home'],["class"=>"dropdown-item"]) ?>
+                    </div>
+                </li>
+                    </div>
+                </li>
+            </ul>
+            <?php if ($rights != null): ?>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <?= $auth->name ?>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <?= $this->Html->link("Mein Konto", ['controller' => 'Users', 'action' => 'Dashboard'], ["class" => "dropdown-item"]) ?>
+                            <?= $this->Html->link("Passwort ändern", ['controller' => 'Users', 'action' => 'newpass'], ["class" => "dropdown-item"]) ?>
+                            <?= $this->Html->link("Abmelden", ['controller' => 'Users', 'action' => 'logout'], ["class" => "dropdown-item"]) ?>
+                            <hr/>
+                            <?php if ($user->can("Admin", $auth)): ?>
+                                <?= $this->Html->link("Nutzerverwaltung", ['controller' => 'Users', 'action' => 'index'], ["class" => "dropdown-item"]) ?>
+                            <?php endif; ?>
+                            <hr/>
+                            <?= $this->Html->link("Über & Rechtliches und Impressum", ['controller' => 'pages', "action" => "display", "impressum"], ["class" => "dropdown-item"]) ?>
+                        </div>
+                    </li>
+                </ul>
             <?php endif; ?>
-            <?php if ($permissionLevel == 5): ?>
-                <?= $this->element('Nav/fk', []) ?>
-            <?php endif; ?>
-            <?php if ($permissionLevel < 5): ?>
-                <?= $this->element('Nav/user', []) ?>
-            <?php endif; ?>
-        <?php endif; ?>
+        </div>
+
     </div>
 </nav>
 <div class="<?= $container_class ?>">
@@ -116,16 +158,16 @@ if(isset($container)){
     <br/>
     <?= $this->fetch('tb_footer'); ?>
 </div>
-<?php  if( Configure::read('footer.enable') === true):  ?>
-<br /><br /><br /><br />
+<?php if (Configure::read('footer.enable') === true): ?>
+    <br/><br/><br/><br/>
     <div class="container-fluid">
         <footer class="text-center text-lg-start bg-dark text-light fixed-bottom">
-        <div class="row">
-            <div class="col-12">
-                <?= Configure::read('footer.text') ?> <br />
-                <?= $this->Html->link(Configure::read('footer.link.text'),Configure::read('footer.link.url'),["target" => Configure::read('footer.link.target')] ) ?>
+            <div class="row">
+                <div class="col-12">
+                    <?= Configure::read('footer.text') ?> <br/>
+                    <?= $this->Html->link(Configure::read('footer.link.text'), Configure::read('footer.link.url'), ["target" => Configure::read('footer.link.target')]) ?>
+                </div>
             </div>
-        </div>
             <span class="copyright-lfs96 ">by LFS96
         <?= $this->Html->link('<i class="bi bi-github"></i>', 'https://github.com/LFS96/WoT_1FP_Claninterface', ["escape" => false, "target" => "_blank"]) ?>
                 <?= $this->Html->link('<i class="bi bi-telegram"></i>', 'https://t.me/FabiGothic', ["escape" => false, "target" => "_blank"]) ?>
@@ -138,7 +180,7 @@ if(isset($container)){
         </footer>
     </div>
 <?php endif; ?>
-<?php  if( Configure::read('footer.enable') !== true):  ?>
+<?php if (Configure::read('footer.enable') !== true): ?>
     <span class="copyright-lfs96">by LFS96
         <?= $this->Html->link('<i class="bi bi-github"></i>', 'https://github.com/LFS96/WoT_1FP_Claninterface', ["escape" => false, "target" => "_blank"]) ?>
         <?= $this->Html->link('<i class="bi bi-telegram"></i>', 'https://t.me/FabiGothic', ["escape" => false, "target" => "_blank"]) ?>
@@ -151,7 +193,9 @@ if(isset($container)){
 <?php endif; ?>
 <?= $this->fetch('scriptBottom'); ?>
 <script>
-    $(document).ready(function (){$('[data-toggle="tooltip"]').tooltip();});
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
 </body>
 </html>
