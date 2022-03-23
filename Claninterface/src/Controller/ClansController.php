@@ -150,11 +150,4 @@ class ClansController extends AppController
         }
         return false;
     }
-
-    public function initialize(): void
-    {
-        parent::initialize();
-        // Add the 'add' action to the allowed actions list.
-        $this->Auth->allow(['tsRank']);
-    }
 }

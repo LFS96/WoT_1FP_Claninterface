@@ -39,7 +39,7 @@ class UserPolicy
     public function canCommander(IdentityInterface $user, User $resource)
     {
         $this->checkUser($resource);
-        return $this->rightsHelper->getPermissionLevel() >= 8;
+        return $this->rightsHelper->isCommander;
     }
     /**
      * Check if $user can add User
@@ -51,7 +51,7 @@ class UserPolicy
     public function canFieldComander(IdentityInterface $user, User $resource)
     {
         $this->checkUser($resource);
-        return $this->rightsHelper->getPermissionLevel() == 4 ||  $this->canCommander($user, $resource);
+        return $this->rightsHelper->isFieldCommander;
     }
     /**
      * Check if $user can add User
@@ -63,7 +63,7 @@ class UserPolicy
     public function canPersonal(IdentityInterface $user, User $resource)
     {
         $this->checkUser($resource);
-        return $this->rightsHelper->getPermissionLevel() == 5 ||  $this->canCommander($user, $resource);
+        return $this->rightsHelper->isPersonal;
     }
     /**
      * Check if $user can add User
@@ -75,7 +75,7 @@ class UserPolicy
     public function canMember(IdentityInterface $user, User $resource)
     {
         $this->checkUser($resource);
-        return $this->rightsHelper->getPermissionLevel() >= 3;
+        return $this->rightsHelper->isMember;
     }
     private function checkUser(User $user){
         if($this->rightsHelper == null) {

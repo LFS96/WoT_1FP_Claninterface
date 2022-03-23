@@ -71,13 +71,13 @@ class AppController extends Controller
 
 
             $rh = new RightsHelper($DESIGN_Ident->getIdentifier());
-            $this->permissionLevel = $rh->getPermissionLevel();
+         //   $this->permissionLevel = $rh->getPermissionLevel();
             $this->LoggedInUsers = $DESIGN_User;
 
         }
 
 
-        $this->set("permissionLevel", $this->permissionLevel);
+      //  $this->set("permissionLevel", $this->permissionLevel);
         $this->set("auth",$DESIGN_User);
 
     }
