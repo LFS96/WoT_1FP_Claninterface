@@ -201,7 +201,7 @@ class WarGamingHelper
         $Clans = $Clans
             ->innerJoinWith("Players")
             ->innerJoinWith("Players.Tokens")
-            ->select(["Clans.id", "token" => "Tokens.token"])
+            ->select(["Clans.id", "token" => "min(Tokens.token)"])
             ->where(["Tokens.expires >" => $Clans->func()->now()])
             ->group("Clans.id");
 

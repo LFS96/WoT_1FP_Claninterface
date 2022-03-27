@@ -22,7 +22,7 @@ class TanksController extends AppController
      */
     public function index()
     {
-        $this->Authorization->can($this->LoggedInUsers, "Member");
+        $this->Authorization->authorize($this->LoggedInUsers, "Member");
         $tanks = $this->Tanks->find("all")->contain("Tanktypes")->where(["expDamage >" => 0]);
 
         $this->set(compact('tanks'));
@@ -37,7 +37,7 @@ class TanksController extends AppController
      */
     public function view($id,$battletype = false)
     {
-        $this->Authorization->can($this->LoggedInUsers, "Member");
+        $this->Authorization->authorize($this->LoggedInUsers, "Member");
         if($battletype == false){
             $battletype = StatisticsConfigHelper::$BattleTypes[0];
         }

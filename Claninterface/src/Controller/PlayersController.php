@@ -56,6 +56,7 @@ class PlayersController extends AppController
 
     public function importStatistic($clan)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $PlayerHelper = new PlayerDataHelper();
         $c = $PlayerHelper->importPlayerStatistic($clan);
         $this->Flash->success("Es wurden $c Datensätze geladen.");

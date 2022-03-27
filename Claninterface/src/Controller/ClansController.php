@@ -76,6 +76,7 @@ class ClansController extends AppController
      */
     public function renew($id)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post', 'delete']);
         $clan = $this->Clans->get($id);
         $WgApi = new WarGamingHelper();
@@ -94,6 +95,7 @@ class ClansController extends AppController
 
     public function getClanMembers($id)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post', 'delete']);
         $clan = $this->Clans->get($id);
         $WgApi = new WarGamingHelper();
@@ -107,6 +109,7 @@ class ClansController extends AppController
 
     }
     public function toggle($id){
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post']);
         $clan = $this->Clans->get($id);
         $clan->cron = $clan->cron?0:1;
@@ -125,6 +128,7 @@ class ClansController extends AppController
      */
     public function delete($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post', 'delete']);
         $clan = $this->Clans->get($id);
         if ($this->Clans->delete($clan)) {
@@ -134,20 +138,5 @@ class ClansController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
-    }
-
-    public function isAuthorized($user)
-    {
-        $action = $this->request->getParam('action');
-        $action = strtolower($action);
-        $pl = $this->permissionLevel;
-
-        if ($pl >= 5 && in_array($action, ["view","index"])){
-            return true;
-        }
-        if ($pl >= 10) {
-            return true;
-        }
-        return false;
     }
 }

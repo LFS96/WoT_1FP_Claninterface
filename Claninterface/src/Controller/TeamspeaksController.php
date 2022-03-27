@@ -7,6 +7,7 @@ use App\Logic\Helper\ClanRuleHelper;
 use App\Logic\Helper\TeamSpeakQueryHelper;
 use App\Logic\Helper\WarGamingHelper;
 use App\Model\Table\ClansTable;
+use Cake\Datasource\ConnectionManager;
 
 /**
  * Teamspeaks Controller
@@ -24,6 +25,7 @@ class TeamspeaksController extends AppController
      */
     public function index()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Personal");
         $TS_Online = $this->Teamspeaks->find("all")->contain(["Players", "Players.Clans", "Players.Ranks"])->innerJoinWith("Players.Clans")->where(["end >=" => "1970-01-02", "TIMESTAMPDIFF(SECOND, start, end) > " => "400"])->orderDesc("end")->limit(1000);
         $this->set('OfflineRecords', $TS_Online);
 
@@ -39,6 +41,7 @@ class TeamspeaksController extends AppController
 
     public function nowOffline()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Personal");
         $CR = new ClanRuleHelper();
         $this->set("MembersOnline", $CR->checkTeamSpeak((new WarGamingHelper())->getOnlinePlayers(), (new TeamSpeakQueryHelper())->getClientlist()));
 
@@ -46,6 +49,7 @@ class TeamspeaksController extends AppController
 
     public function tsOnline()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Personal");
         $this->set("online", (new TeamSpeakQueryHelper())->getOnlinePlayersInfo());
     }
 
@@ -58,6 +62,7 @@ class TeamspeaksController extends AppController
      */
     public function delete($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Personal");
         $this->request->allowMethod(['post', 'delete']);
         $teamspeak = $this->Teamspeaks->get($id);
         if ($this->Teamspeaks->delete($teamspeak)) {
@@ -71,20 +76,28 @@ class TeamspeaksController extends AppController
 
     public function players()
     {
-        $TS_Online = $this->Teamspeaks->find("all");
-        $TS_Online
-            ->select([
-                "short" => "Clans.short",
-                "nick" => "Players.nick",
-                "sum" => $TS_Online->func()->sum("TIMESTAMPDIFF(SECOND, start, end)"),
-                "count" => $TS_Online->func()->count("*")
-            ])
-            ->contain(["Players", "Players.Clans", "Players.Ranks"])
-            ->innerJoinWith("Players.Clans")
-            ->where(["end >=" => "1970-01-02", "TIMESTAMPDIFF(SECOND, start, end) > " => "400"])
-            ->group("Players.id")
-            ->orderDesc("Clans.short")
-            ->orderDesc("Players.nick")->limit(1000);
+        $this->Authorization->authorize($this->LoggedInUsers,"Personal");
+        $connection = ConnectionManager::get('default');
+        $TS_Online = $connection
+            ->execute('
+                SELECT
+                       Clans.short AS short,
+                       Players.id AS id,
+                       Players.nick AS nick,
+                       (SUM(TIMESTAMPDIFF(SECOND, start, end))) AS sum,
+                       (COUNT(*)) AS count
+                FROM teamspeaks Teamspeaks
+                INNER JOIN players Players ON Players.id = Teamspeaks.player_id
+                INNER JOIN clans Clans ON Clans.id = Players.clan_id
+                WHERE
+                    (end >= "1970-02-01" AND TIMESTAMPDIFF(SECOND, start, end) > 400)
+                GROUP BY Players.id
+                ORDER BY
+                    Clans.short DESC,
+                    Players.nick DESC
+                LIMIT 1000
+            ')
+            ->fetchAll('assoc');
         $this->set('OfflineRecords', $TS_Online);
     }
 
@@ -94,6 +107,7 @@ class TeamspeaksController extends AppController
      */
     public function ban($uid)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post', 'delete']);
         (new TeamSpeakQueryHelper())->banPlayerByUID(hex2bin($uid));
         return $this->redirect($this->referer());
@@ -105,25 +119,10 @@ class TeamspeaksController extends AppController
      */
     public function kick($uid)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post', 'delete']);
         (new TeamSpeakQueryHelper())->kickPlayerByUID(hex2bin($uid));
         return $this->redirect($this->referer());
-    }
-
-    public function isAuthorized($user)
-    {
-        $action = $this->request->getParam('action');
-        $action = strtolower($action);
-        $pl = $this->permissionLevel;
-
-        if ($pl >= 8 && !in_array($action, ["kick", "ban"])) {
-            return true;
-        }
-
-        if ($pl >= 10) {
-            return true;
-        }
-        return false;
     }
 
     public function initialize(): void

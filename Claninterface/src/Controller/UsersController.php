@@ -29,6 +29,7 @@ class UsersController extends AppController
      */
     public function index()
     {
+       $this->Authorization->authorize($this->LoggedInUsers,"Admin");
        $this->set("users", $this->Users->find("all")->where(["email LIKE"=> "%@%"]));
        $this->set("wgAccounts", $this->Users->find("all")->where(["email NOT LIKE"=> "%@%"]));
 
@@ -43,6 +44,7 @@ class UsersController extends AppController
      */
     public function view($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $user = $this->Users->get($id, ['contain' => ['Players','Tokens', 'Tokens.Players', 'Tokens.Players.Clans']]);
 
         $this->set('user', $user);
@@ -55,6 +57,7 @@ class UsersController extends AppController
      */
     public function add()
     {
+        $this->Authorization->skipAuthorization();
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData(), ['fields' => ['name', 'email', 'password']]);#
@@ -86,6 +89,7 @@ class UsersController extends AppController
      */
     public function edit($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $user = $this->Users->get($id, [
             'contain' => [],
         ]);
@@ -111,6 +115,7 @@ class UsersController extends AppController
      */
     public function delete($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);
         if ($this->Users->delete($user)) {
@@ -124,7 +129,7 @@ class UsersController extends AppController
 
     public function dashboard()
     {
-        $this->Authorization->can($this->LoggedInUsers, "Member");
+        $this->Authorization->skipAuthorization();
         $UserIsAdmin = false;
         if ($this->LoggedInUsers->admin) {
             $UserIsAdmin = true;
@@ -219,8 +224,9 @@ class UsersController extends AppController
 
     public function newpass()
     {
-        $id = $this->Auth->user('id');
-        $user = $this->Users->get($id);
+
+        $this->Authorization->skipAuthorization();
+        $user = $this->LoggedInUsers;
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData(), [
                 'fields' => [
@@ -240,6 +246,7 @@ class UsersController extends AppController
         $this->set(compact('user'));
     }
     public function toggleAdmin($id){
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post', 'delete']);
         $accounts = $this->Users->find("all")->where(["id" => $id, "email LIKE"=> "%@%"]);
         if ($accounts->count() >= 1) {
@@ -256,6 +263,7 @@ class UsersController extends AppController
     }
 
     public function adminPwReset($id){
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post', 'delete']);
         $accounts = $this->Users->find("all")->where(["id" => $id, "email LIKE"=> "%@%"]);
         if ($accounts->count() >= 1) {
@@ -275,6 +283,7 @@ class UsersController extends AppController
 
     public function unlock()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is(['patch', 'post', 'put'])) {
             $accounts = $this->Users->find("all")->where(["email" => $this->request->getData("email"), "email LIKE"=> "%@%"]);
@@ -317,25 +326,7 @@ class UsersController extends AppController
         return true;
     }
 
-    public function isAuthorized($user)
-    {
-        $action = $this->request->getParam('action');
-        $action = strtolower($action);
-        $user_id = $this->request->getParam('pass.0');
-        $pl = $this->permissionLevel;
 
-        if ($pl >= 0 && in_array($action, ["newpass", "dashboard"])) {
-            return true;
-        }
-        if($user["id"] == $user_id && in_array($action,["view"])){
-            return  true;
-        }
-
-        if ($pl >= 10) {
-            return true;
-        }
-        return false;
-    }
 
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {

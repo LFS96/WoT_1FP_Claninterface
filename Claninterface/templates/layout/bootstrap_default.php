@@ -93,37 +93,54 @@ if (isset($container)) {
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
+            <?php if ($rights == null): ?>
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <?= $this->Html->link("Clans", ['controller' => 'Clans', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                    <?= $this->Html->link("Auszeit nehmen", ['controller' => 'Inactives', 'action' => 'add', 'home'], ["class" => "nav-link"]) ?>
                 </li>
                 <li class="nav-item">
-                    <?= $this->Html->link("Teamspeak", ['controller' => 'Teamspeaks', 'action' => 'index'], ["class" => "nav-link"]) ?>
-                </li>
-                <li class="nav-item">
-                    <?= $this->Html->link("Abmeldungen", ['controller' => 'Inactives', 'action' => 'index'], ["class" => "nav-link"]) ?>
-                </li>
-                <li class="nav-item">
-                    <?= $this->Html->link("Veranstaltung", ['controller' => 'Meetings', 'action' => 'index'], ["class" => "nav-link"]) ?>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Mehr
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <?= $this->Html->link("Panzer", ['controller' => 'Tanks', 'action' => 'index'], ["class" => "dropdown-item"]) ?>
-                        <?php if ($user->can("Commander", $auth)): ?>
-                        <?= $this->Html->link("Ränge", ['controller' => 'Ranks', 'action' => 'index'], ["class" => "dropdown-item"]) ?>
-                        <?php endif; ?>
-                        <?= $this->Html->link("TS3 Rang", ['controller' => 'Players', 'action' => 'tsRank'], ["class" => "dropdown-item"]) ?>
-                        <?= $this->Html->link("Auszeit nehmen",['controller' => 'Inactives', 'action' => 'add', 'home'],["class"=>"dropdown-item"]) ?>
-                    </div>
-                </li>
-                    </div>
+                    <?= $this->Html->link("TS3 Rang", ['controller' => 'Players', 'action' => 'tsRank'], ["class" => "nav-link"]) ?>
                 </li>
             </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <?= $this->Html->link("Login", ['controller' => 'Users', 'action' => 'login'], ["class" => "nav-link"]) ?>
+                </li>
+                <li class="nav-item">
+                    <?= $this->Html->link("Über & Rechtliches und Impressum", ['controller' => 'pages', "action" => "display", "impressum"], ["class" => "nav-link"]) ?>
+                </li>
+            </ul>
+
+            <?php endif; ?>
             <?php if ($rights != null): ?>
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <?= $this->Html->link("Clans", ['controller' => 'Clans', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                    </li>
+                    <li class="nav-item">
+                        <?= $this->Html->link("Teamspeak", ['controller' => 'Teamspeaks', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                    </li>
+                    <li class="nav-item">
+                        <?= $this->Html->link("Abmeldungen", ['controller' => 'Inactives', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                    </li>
+                    <li class="nav-item">
+                        <?= $this->Html->link("Veranstaltung", ['controller' => 'Meetings', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Mehr
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <?= $this->Html->link("Panzer", ['controller' => 'Tanks', 'action' => 'index'], ["class" => "dropdown-item"]) ?>
+                            <?php if ($user?->canResult("Commander", $auth)->getStatus()): ?>
+                                <?= $this->Html->link("Ränge", ['controller' => 'Ranks', 'action' => 'index'], ["class" => "dropdown-item"]) ?>
+                            <?php endif; ?>
+                            <?= $this->Html->link("TS3 Rang", ['controller' => 'Players', 'action' => 'tsRank'], ["class" => "dropdown-item"]) ?>
+                            <?= $this->Html->link("Auszeit nehmen", ['controller' => 'Inactives', 'action' => 'add', 'home'], ["class" => "dropdown-item"]) ?>
+                        </div>
+                    </li>
+                </ul>
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
@@ -134,8 +151,9 @@ if (isset($container)) {
                             <?= $this->Html->link("Mein Konto", ['controller' => 'Users', 'action' => 'Dashboard'], ["class" => "dropdown-item"]) ?>
                             <?= $this->Html->link("Passwort ändern", ['controller' => 'Users', 'action' => 'newpass'], ["class" => "dropdown-item"]) ?>
                             <?= $this->Html->link("Abmelden", ['controller' => 'Users', 'action' => 'logout'], ["class" => "dropdown-item"]) ?>
-                            <hr/>
-                            <?php if ($user->can("Admin", $auth)): ?>
+
+                            <?php if ($user?->canResult("Admin", $auth)->getStatus()): ?>
+                                <hr/>
                                 <?= $this->Html->link("Nutzerverwaltung", ['controller' => 'Users', 'action' => 'index'], ["class" => "dropdown-item"]) ?>
                             <?php endif; ?>
                             <hr/>

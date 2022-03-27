@@ -27,12 +27,12 @@ $addAccountUrl = "https://" . Configure::read('Wargaming.server') . "/wot/auth/l
                 <table class="table table-sm table-striped">
                     <thead><tr><th>Berechtigung</th><th>Ihre Rechte</th></tr></thead>
                     <tbody>
-                        <tr><td>Clangruppen-Mitglied</td><td><?= $user->can("Member", $auth) ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
-                        <tr><td>Clangruppen-Offizier</td><td><?= $user->can("Officer", $auth) ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
-                        <tr><td>Clangruppen-Personaloffizier</td><td><?= $user->can("Personal", $auth) ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
-                        <tr><td>Clangruppen-Feldkommandant</td><td><?= $user->can("FieldCommander", $auth)? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
-                        <tr><td>Clangruppen-Commandant</td><td><?= $user->can("Commander", $auth) ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
-                        <tr><td>Administrator</td><td><?= $user->can("Admin", $auth) ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
+                        <tr><td>Clangruppen-Mitglied</td><td><?= $user?->canResult("Member", $auth)->getStatus() ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
+                        <tr><td>Clangruppen-Offizier</td><td><?= $user?->canResult("Officer", $auth)->getStatus() ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
+                        <tr><td>Clangruppen-Personaloffizier</td><td><?= $user?->canResult("Personal", $auth)->getStatus() ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
+                        <tr><td>Clangruppen-Feldkommandant</td><td><?= $user?->canResult("FieldCommander", $auth)->getStatus()? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
+                        <tr><td>Clangruppen-Commandant</td><td><?= $user?->canResult("Commander", $auth)->getStatus() ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
+                        <tr><td>Administrator</td><td><?= $user?->canResult("Admin", $auth)->getStatus() ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
                     </tbody>
                 </table>
             <?php } ?>

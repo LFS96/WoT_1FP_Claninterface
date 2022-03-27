@@ -62,8 +62,8 @@ class AppController extends Controller
         $this->loadComponent('Authorization.Authorization');
 
         $DESIGN_User = false;
+        $DESIGN_Ident = $this->Authentication->getIdentity();
         if ($this->Authentication->getIdentity()?->getIdentifier()) {
-            $DESIGN_Ident = $this->Authentication->getIdentity();
             $UsersTables = TableRegistry::getTableLocator()->get('Users');
             $DESIGN_User = $UsersTables->get($DESIGN_Ident->getIdentifier());
 

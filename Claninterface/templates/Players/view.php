@@ -55,11 +55,11 @@ foreach ($tier_battles as $k => $v) {
 }
 ?>
 
-<?php if ($permissionLevel >= 5): ?>
+
     <?= $this->Html->link(__('<i class="bi bi-chevron-left"></i> zurück'), ['controller' => 'Clans', 'action' => 'view', $player->clan_id], ["class" => "btn btn-dark btn-sm", "escape" => false]) ?>
-<?php endif; ?>
-    <?php foreach (StatisticsConfigHelper::$BattleTypesNames as $name => $val): ?>
-        <?= $this->Html->link($name, ["action" => "view", $player->id, $val], ["class" => "btn btn-secondary btn-sm"]) ?>
+    <?php foreach (StatisticsConfigHelper::$BattleTypesNames as $name => $val):
+        $btn_class = $battletype== $val?"btn btn-info btn-sm":"btn btn-secondary btn-sm";?>
+        <?= $this->Html->link($name, ["action" => "view", $player->id, $val], ["class" => $btn_class]) ?>
     <?php endforeach; ?>
     <br/>
     <br/>
@@ -69,11 +69,11 @@ foreach ($tier_battles as $k => $v) {
     <table class="table table-sm table-striped">
         <tr>
             <th scope="row"><?= __('Clan') ?></th>
-            <td><?= $player->has('clan') ? $this->Html->image($player->clan->icon, ["height" => 30]) . " " . (($permissionLevel >= 8) ? $this->Html->link($player->clan->short, ['controller' => 'Clans', 'action' => 'view', $player->clan->id]) : $player->clan->short) : '' ?></td>
+            <td><?= $player->has('clan') ? $this->Html->image($player->clan->icon, ["height" => 30]) . " " . $this->Html->link($player->clan->short, ['controller' => 'Clans', 'action' => 'view', $player->clan->id]) : '' ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('Rang') ?></th>
-            <td><?= $player->has('rank') ? $this->Html->image("ranks/" . $player->rank->name . ".png", ["height" => 30]) . " " . (($permissionLevel >= 8) ? $this->Html->link($player->rank->speekName, ['controller' => 'Ranks', 'action' => 'view', $player->rank->id]) : $player->rank->speekName) : '' ?></td>
+            <td><?= $player->has('rank') ? $this->Html->image("ranks/" . $player->rank->name . ".png", ["height" => 30]) . " " . (($user->canResult("Commander",$auth)->getStatus()) ? $this->Html->link($player->rank->speekName, ['controller' => 'Ranks', 'action' => 'view', $player->rank->id]) : $player->rank->speekName) : '' ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('WN8') ?></th>
@@ -118,7 +118,7 @@ foreach ($tier_battles as $k => $v) {
             <th>Typ</th>
             <th>Nation</th>
             <th>Gefechte</th>
-            <th>Siegrate</th>
+            <th>Siegesrate</th>
             <th>Schaden</th>
             <th>Kills</th>
             <th>WN8</th>
@@ -149,7 +149,7 @@ foreach ($tier_battles as $k => $v) {
         <?php endforeach; ?>
         </tbody>
     </table>
-    <?php if ($permissionLevel >= 8): ?>
+    <?php if ($user->canResult("Commander",$auth)->getStatus()): ?>
         <br/>
         <h2>Veranstaltungen</h2>
         <table class="table DataTable">

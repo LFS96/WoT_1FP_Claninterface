@@ -53,7 +53,7 @@ $data = [
         "Schaden" => "",
     ],
     "chart2" => [
-        "Siegrate %" => "",
+        "Siegesrate %" => "",
         "Trefferrate %" => "",
         "Block %" => "",
         "Überleben %" => "",
@@ -77,7 +77,7 @@ foreach ($stats as $stat) {
     $data["chart1"]["WN8"] .= WN8Helper::calcWN8($stat, $stat->tank) . ",";
     $data["chart1"]["Schaden"] .= $stat->damage / $stat->battle . ",";
 
-    $data["chart2"]["Siegrate %"] .= $stat->win * 100 / $stat->battle . ",";
+    $data["chart2"]["Siegesrate %"] .= $stat->win * 100 / $stat->battle . ",";
     $data["chart2"]["Trefferrate %"] .= $stat->hits * 100 / $stat->shots . ",";
     $data["chart2"]["Block %"] .= $stat->tanking . ",";
     $data["chart2"]["Überleben %"] .= $stat->survived * 100 / $stat->battle . ",";

@@ -28,7 +28,9 @@ use App\View\AppView;
         </tr>
         </thead>
         <tbody>
-        <?php foreach ($OfflineRecords as $ts) { ?>
+        <?php foreach ($OfflineRecords as $ts) {
+            $ts = (object)$ts;
+            ?>
             <tr>
                 <td><?= $ts->short ?></td>
                 <td><?= $ts->nick ?></td>

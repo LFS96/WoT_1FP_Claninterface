@@ -20,9 +20,6 @@ use App\View\AppView;
 <?php foreach (StatisticsConfigHelper::$BattleTypesNames as $name => $val):
     $btn_class = $battletype== $val?"btn btn-info btn-sm":"btn btn-secondary btn-sm";
     ?>
-
-
-
     <?= $this->Html->link($name,["action"=>"view",$tank->id, $val],["class"=>$btn_class]) ?>
 <?php endforeach; ?>
 
@@ -64,7 +61,7 @@ use App\View\AppView;
             <td><?= $this->Number->format($tank->expFrag, ["locale" => 'de_DE']) ?></td>
         </tr>
         <tr>
-            <th scope="row"><?= __('Siegrate') ?></th>
+            <th scope="row"><?= __('Siegesrate') ?></th>
             <td><?= $this->Number->format($tank->expWinRate, ["locale" => 'de_DE']) ?></td>
         </tr>
         <tr>
@@ -90,7 +87,7 @@ use App\View\AppView;
             <th>Clan</th>
             <th>Spieler</th>
             <th>Gefechte</th>
-            <th>Siegrate</th>
+            <th>Siegesrate</th>
             <th>Schaden</th>
             <th>Kills</th>
             <th>WN8</th>
@@ -105,15 +102,14 @@ use App\View\AppView;
         ?>
 
         <tr>
-            <td><?= $user->can("FieldCommander",$auth)? $this->Html->link($stat->player->clan->short,["controller"=>"clans","action"=>"view", $stat->player->clan_id]):$stat->player->clan->short ?></td>
-            <td><?= $user->can("FieldCommander", $auth)? $this->Html->link($stat->player->nick,["controller"=>"players","action"=>"view", $stat->player->id,$battletype]): $stat->player->nick ?></td>
+            <td><?= $user?->canResult("FieldCommander",$auth)->getStatus()? $this->Html->link($stat->player->clan->short,["controller"=>"clans","action"=>"view", $stat->player->clan_id]):$stat->player->clan->short ?></td>
+            <td><?= $user?->canResult("FieldCommander", $auth)->getStatus()? $this->Html->link($stat->player->nick,["controller"=>"players","action"=>"view", $stat->player->id,$battletype]): $stat->player->nick ?></td>
             <td data-sort="<?=  $stat->battle ?>"><?= $this->Number->format( $stat->battle  , ["locale" => 'de_DE']);?></td>
             <td data-sort="<?= $sieg ?>" class="<?= WN8Helper::SiegColor($sieg) ?>"><?= $this->Number->format( $sieg , ["locale" => 'de_DE', "precision"=>2]); ?></td>
             <td data-sort="<?= $stat->damage /$stat->battle ?>"><?=$this->Number->format(  $stat->damage /$stat->battle  , ["locale" => 'de_DE', "precision"=>2]);?></td>
             <td data-sort="<?= $stat->frags /$stat->battle ?>"><?= $this->Number->format( $stat->frags /$stat->battle  , ["locale" => 'de_DE', "precision"=>2]);?></td>
             <td data-sort="<?= $wn8 ?>" class="<?= WN8Helper::WnColor($wn8) ?>"><?= $this->Number->format( $wn8 , ["locale" => 'de_DE', "precision"=>2]);?></td>
-            <td><?=  $user->can("FieldCommander", $auth)?  $this->Html->link('<i class="far fa-chart-bar"></i>',["controller"=>"players","action"=>"tankStats",$stat->player->id,$stat->tank->id, $battletype],["escape"=>false,"class"=>"btn btn-dark btn-sm"]):"" ?></td>
-
+            <td><?= $this->Html->link('<i class="far fa-chart-bar"></i>',["controller"=>"players","action"=>"tankStats",$stat->player->id,$stat->tank->id, $battletype],["escape"=>false,"class"=>"btn btn-dark btn-sm"]) ?></td>
         </tr>
     <?php endforeach;?>
         </tbody>

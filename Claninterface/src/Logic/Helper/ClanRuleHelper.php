@@ -26,7 +26,7 @@ class ClanRuleHelper
             return  array();
         }
         $TSTable = TableRegistry::getTableLocator()->get('Teamspeaks');
-        $offllineRecords = $TSTable->find("all")->contain(["players"])->where(["end <" => "1970-01-02"]);
+        $offllineRecords = $TSTable->find("all")->contain(["Players"])->where(["end <" => "1970-01-02"]);
 
 
         //CLOSE OPEN
@@ -34,7 +34,7 @@ class ClanRuleHelper
         foreach ($offllineRecords as $record){
 
             foreach ($teamspeakUsers as $user) {
-                if (StringHelper::str_contains(strtolower($user), strtolower($record->Players['nick']))) {
+                if (StringHelper::str_contains(strtolower($user), strtolower($record->player['nick']))) {
                     $record->end = new \DateTime();
                     $record->reason = 1;
                     $TSTable->save($record);

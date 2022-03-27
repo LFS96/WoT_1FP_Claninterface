@@ -14,7 +14,7 @@ use Cake\Collection\CollectionInterface;
 
     <h1>Panzer im Spiel mit WN8 Statistik</h1>
 
-    <?php if($user->can("Commander",$auth)){ echo$this->Html->link('<i class="bi bi-cloud-download"></i> Import anstoßen',["action"=>"import"],["class" =>"btn btn-dark btn-sm","escape"=>false])."<br />";}?>
+    <?php if($user?->canResult("Commander",$auth)->getStatus()){ echo$this->Html->link('<i class="bi bi-cloud-download"></i> Import anstoßen',["action"=>"import"],["class" =>"btn btn-dark btn-sm","escape"=>false])."<br />";}?>
 <br />
 
 

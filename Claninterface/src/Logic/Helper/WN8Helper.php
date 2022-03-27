@@ -77,11 +77,11 @@ class WN8Helper
         }
 
         // Calculate WN8
-        $rDAMAGE = $summary->damage_dealt / $expDAMAGE;
-        $rSPOT = $summary->spotted / $expSPOT;
-        $rFRAG = $summary->frags / $expFRAGS;
-        $rDEF = $summary->dropped_capture_points / $expDEF;
-        $rWIN = $summary->wins / $expWIN;
+        $rDAMAGE = $expDAMAGE==0?0: $summary->damage_dealt / $expDAMAGE;
+        $rSPOT =   $expSPOT==0?0:   $summary->spotted / $expSPOT;
+        $rFRAG =   $expFRAGS==0?0:  $summary->frags / $expFRAGS;
+        $rDEF =    $expDEF==0?0:    $summary->dropped_capture_points / $expDEF;
+        $rWIN =    $expWIN==0?0:    $summary->wins / $expWIN;
 
         $rWINc = max(0, ($rWIN - 0.71) / (1 - 0.71));
         $rDAMAGEc = max(0, ($rDAMAGE - 0.22) / (1 - 0.22));

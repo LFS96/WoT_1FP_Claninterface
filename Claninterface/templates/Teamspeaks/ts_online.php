@@ -17,7 +17,7 @@ use App\View\AppView;
         <th>Ingame</th>
         <th>WoT-Online</th>
         <th>Channel</th>
-        <?php if($permissionLevel >= 10): ?><th>XXX</th> <?php endif; ?>
+        <?php if($user->can("Admin",$auth)): ?><th>XXX</th> <?php endif; ?>
     </tr>
     </thead>
     <tbody>
@@ -33,7 +33,7 @@ use App\View\AppView;
 
             <?php } ?>
             <td><?= $row["channel"] ?></td>
-            <?php if($permissionLevel >= 10): ?>
+            <?php if($user->can("Admin",$auth)): ?>
             <td>
                 <?php
                 if (!$row["admin"]) {
