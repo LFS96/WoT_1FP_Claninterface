@@ -96,6 +96,16 @@ return [
      * Configure the cache adapters.
      */
     'Cache' => [
+        'api' => [
+            'className' => FileEngine::class,
+            'path' => CACHE.'api/',
+            'url' => env('CACHE_DEFAULT_URL'),
+            'serialize' => true,
+
+            'duration' => '+1 minutes',
+        ],
+
+
         'default' => [
             'className' => FileEngine::class,
             'path' => CACHE,

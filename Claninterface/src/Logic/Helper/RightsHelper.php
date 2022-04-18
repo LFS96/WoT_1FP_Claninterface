@@ -22,7 +22,7 @@ class RightsHelper
     const Commander = [1,2];
     const FieldCommander = [1,2,4,5];
     const PersonalCommander = [1,2,3,7];
-    const Officer = [1,2,3,4,5,6,7,8];
+    const Officer = [1,2,3,4,5,7];
 
 
     /**

@@ -174,7 +174,7 @@ foreach ($tier_battles as $k => $v) {
                         <td data-sort="<?= $participant->wot ?>"><?= $participant->wot ? "<i class='text-success bi bi-check2-circle'></i>" : "<i class='text-danger bi bi-exclamation-diamond-fill'></i>" ?></td>
                         <td><?= $participant->channel ?></td>
                         <td><?= $participant->teamspeak ?></td>
-                        <td><?= $participant->joined->format("H:i") ?></td>
+                        <td><?= $participant->joined ?></td>
                         <td><?= $this->Form->postLink('<i class="bi bi-trash"></i>', ["controller" => 'Meetingparticipants', 'action' => 'delete', $participant->id], ['confirm' => __('Teilname von "{0}" am Event "{0}" löschen?', $player->nick, $participant->meeting->name), "class" => "btn btn-danger btn-sm", "escape" => false]); ?>
                         </td>
                     </tr>

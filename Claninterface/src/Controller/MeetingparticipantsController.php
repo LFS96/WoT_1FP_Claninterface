@@ -20,6 +20,7 @@ class MeetingparticipantsController extends AppController
      */
     public function delete($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Commander");
         $this->request->allowMethod(['post', 'delete']);
         $meetingparticipant = $this->Meetingparticipants->get($id);
         if ($this->Meetingparticipants->delete($meetingparticipant)) {
@@ -30,25 +31,8 @@ class MeetingparticipantsController extends AppController
 
         return $this->redirect($this->referer());
     }
-    public function isAuthorized($user)
-    {
-        $action = $this->request->getParam('action');
-        $action = strtolower($action);
 
-        $pl = $this->permissionLevel;
 
-        if ($pl >= 8){
-            return true;
-        }
 
-        return false;
-    }
-
-    public function initialize(): void
-    {
-        parent::initialize();
-        // Add the 'add' action to the allowed actions list.
-        $this->Auth->allow(['tsRank']);
-    }
 
 }

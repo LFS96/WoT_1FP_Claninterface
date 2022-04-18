@@ -20,6 +20,7 @@ class TanktypesController extends AppController
      */
     public function index()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $tanktypes = $this->paginate($this->Tanktypes);
 
         $this->set(compact('tanktypes'));
@@ -34,6 +35,7 @@ class TanktypesController extends AppController
      */
     public function view($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $tanktype = $this->Tanktypes->get($id, [
             'contain' => [],
         ]);
@@ -48,6 +50,7 @@ class TanktypesController extends AppController
      */
     public function add()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $tanktype = $this->Tanktypes->newEmptyEntity();
         if ($this->request->is('post')) {
             $tanktype = $this->Tanktypes->patchEntity($tanktype, $this->request->getData());
@@ -70,6 +73,7 @@ class TanktypesController extends AppController
      */
     public function edit($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $tanktype = $this->Tanktypes->get($id, [
             'contain' => [],
         ]);
@@ -94,6 +98,7 @@ class TanktypesController extends AppController
      */
     public function delete($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post', 'delete']);
         $tanktype = $this->Tanktypes->get($id);
         if ($this->Tanktypes->delete($tanktype)) {

@@ -19,6 +19,7 @@ class RanksController extends AppController
      */
     public function index()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Commander");
         $ranks = $this->paginate($this->Ranks);
 
         $this->set(compact('ranks'));
@@ -33,6 +34,7 @@ class RanksController extends AppController
      */
     public function view($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Commander");
         $rank = $this->Ranks->get($id, [
             'contain' => ['Players'],
         ]);
@@ -47,6 +49,7 @@ class RanksController extends AppController
      */
     public function add()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $rank = $this->Ranks->newEmptyEntity();
         if ($this->request->is('post')) {
             $rank = $this->Ranks->patchEntity($rank, $this->request->getData());
@@ -69,6 +72,7 @@ class RanksController extends AppController
      */
     public function edit($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $rank = $this->Ranks->get($id, [
             'contain' => [],
         ]);
@@ -93,6 +97,7 @@ class RanksController extends AppController
      */
     public function delete($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         $this->request->allowMethod(['post', 'delete']);
         $rank = $this->Ranks->get($id);
         if ($this->Ranks->delete($rank)) {

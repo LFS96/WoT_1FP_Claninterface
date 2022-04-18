@@ -19,7 +19,7 @@ use App\View\AppView;
     <tr><th>Clan</th><td>[<?= $meeting->clan->short ?>] <?= $meeting->clan->name ?></td></tr>
     <tr><th>Name</th><td><?= $meeting->name ?></td></tr>
     <tr><th>Datum</th><td> <?= $meeting->date->format("d.m.Y") ?></td></tr>
-    <tr><th>Uhrzeit</th><td><?= $meeting->start->format("H:i") ?> - <?= $meeting->end->format("H:i") ?> </td></tr>
+    <tr><th>Uhrzeit</th><td><?= $meeting->start ?> - <?= $meeting->end ?> </td></tr>
     <tr><th>Wiederholung</th><td><?= $meeting->cloned ?"Wird zum ".$meeting->date->addDay(7)->format("d.m.Y")." wiederholt":"Wird nicht wiederholt"?>
 </table>
 <br />
@@ -37,7 +37,9 @@ use App\View\AppView;
         <th>Channels</th>
         <th>Teamspeak</th>
         <th>Beigetreten</th>
-        <th>XXX</th>
+        <?php if ($user?->canResult("Commander", $auth)->getStatus()): ?>
+            <th>XXX</th>
+        <?php endif; ?>
     </tr>
     </thead>
 <tbody>
@@ -49,8 +51,10 @@ use App\View\AppView;
             <td data-sort="<?=$participant->wot ?>"><?= $participant->wot?"<i class='text-success bi bi-check2-circle'></i>":"<i class='text-danger bi bi-exclamation-diamond-fill'></i>"?></td>
             <td><?= $participant->channel ?></td>
             <td><?= $participant->teamspeak ?></td>
-            <td><?= $participant->joined->format("H:i") ?></td>
-            <td><?= $this->Form->postLink('<i class="bi bi-trash"></i>',["controller" => 'Meetingparticipants','action' => 'delete', $participant->id], ['confirm' => __('Teilname von "{0}" am Event "{0}" löschen?', $participant->player->nick ,$meeting->name), "class"=>"btn btn-danger btn-sm", "escape"=>false]); ?>
+            <td><?= $participant->joined ?></td>
+            <?php if ($user?->canResult("Commander", $auth)->getStatus()): ?>
+                <td><?= $this->Form->postLink('<i class="bi bi-trash"></i>',["controller" => 'Meetingparticipants','action' => 'delete', $participant->id], ['confirm' => __('Teilname von "{0}" am Event "{0}" löschen?', $participant->player->nick ,$meeting->name), "class"=>"btn btn-danger btn-sm", "escape"=>false]); ?>
+            <?php endif; ?>
             </td>
         </tr>
 <?php  endforeach;

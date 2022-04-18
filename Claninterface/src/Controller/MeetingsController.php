@@ -21,6 +21,7 @@ class MeetingsController extends AppController
      */
     public function index()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Officer");
         $this->set('meetings', $this->Meetings->find("all")->contain(["Clans"])->where(["date >=" => date("Y-m-d")]));
         $this->set('oldMeetings', $this->Meetings->find("all")->contain(["Clans"])->where(["date <" => date("Y-m-d")]));
       //  MeetingsHelper::findParticipant();
@@ -37,6 +38,7 @@ class MeetingsController extends AppController
      */
     public function view($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Officer");
         $meeting = $this->Meetings->get($id, [
             'contain' => ['Clans', 'Meetingparticipants','Meetingparticipants.Players','Meetingparticipants.Players.Ranks'],
         ]);
@@ -51,6 +53,7 @@ class MeetingsController extends AppController
      */
     public function add()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Officer");
         $meeting = $this->Meetings->newEmptyEntity();
         if ($this->request->is('post')) {
             $meeting = $this->Meetings->patchEntity($meeting, $this->request->getData());
@@ -74,6 +77,7 @@ class MeetingsController extends AppController
      */
     public function edit($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Officer");
         $meeting = $this->Meetings->get($id, [
             'contain' => [],
         ]);
@@ -99,6 +103,7 @@ class MeetingsController extends AppController
      */
     public function delete($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Officer");
         $this->request->allowMethod(['post', 'delete']);
         $meeting = $this->Meetings->get($id);
         if ($this->Meetings->delete($meeting)) {
@@ -111,7 +116,7 @@ class MeetingsController extends AppController
     }
 
     public function eventlist($clan){
-
+        $this->Authorization->authorize($this->LoggedInUsers,"Officer");
         $this->set("Clan", $this->Meetings->Clans->get($clan));
 
         $date = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
@@ -149,6 +154,7 @@ class MeetingsController extends AppController
         $this->set("container", "container-fluid");
     }
     public function registrations($meeting_id){
+        $this->Authorization->authorize($this->LoggedInUsers,"Officer");
         $meeting = $this->Meetings->get($meeting_id);
         $this->set("meeting", $meeting);
 
@@ -159,7 +165,10 @@ class MeetingsController extends AppController
             ->where([
                 "meeting_id" => $meeting_id,
                 "clan_id" => $meeting->clan_id,
-            ]));
+            ])
+            ->orderAsc("status")
+        )
+        ;
         $this->set("regs_group", $this->Meetings->Meetingregistrations
             ->find("all")
             ->contain(["Players", "Players.Ranks", "Players.Clans"])
@@ -167,27 +176,12 @@ class MeetingsController extends AppController
             ->where([
                 "meeting_id" => $meeting_id,
                 "clan_id <>" => $meeting->clan_id
-            ]));
+            ])
+            ->orderAsc("status")
+        );
 
 
 
 
-    }
-
-    public function isAuthorized($user)
-    {
-
-        if ($this->permissionLevel >= 5){
-            return true;
-        }
-
-        return false;
-    }
-
-    public function initialize(): void
-    {
-        parent::initialize();
-        // Add the 'add' action to the allowed actions list.
-        $this->Auth->allow(['tsRank']);
     }
 }

@@ -60,6 +60,7 @@ class TanksController extends AppController
 
 
     public function import(){
+        $this->Authorization->authorize($this->LoggedInUsers, "Commander");
         $TankHelper = new TankDataHelper();
         $TankListr=  $TankHelper->getTankList();
         $TankHelper->importTank($TankListr,true);

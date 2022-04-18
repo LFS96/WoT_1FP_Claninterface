@@ -23,8 +23,6 @@ use Cake\ORM\TableRegistry;
  */
 class PlayersController extends AppController
 {
-
-
     /**
      * View method
      *
@@ -34,7 +32,7 @@ class PlayersController extends AppController
      */
     public function view($id, $battletype = false)
     {
-
+        $this->Authorization->authorize($this->LoggedInUsers,"Member");
         if($battletype == false){
             $battletype = StatisticsConfigHelper::$BattleTypes[0];
         }
@@ -64,7 +62,7 @@ class PlayersController extends AppController
     }
     public function tankStats($player, $tank,$battletype = false)
     {
-
+        $this->Authorization->authorize($this->LoggedInUsers,"Member");
         if($battletype == false){
             $battletype = StatisticsConfigHelper::$BattleTypes[0];
         }
@@ -108,7 +106,7 @@ class PlayersController extends AppController
 
     }
     public function tree(){
-
+        $this->Authorization->authorize($this->LoggedInUsers,"Member");
         $wgh = new WarGamingHelper();
         $players = $this->Players->find("all")->contain(["Clans"]);
 

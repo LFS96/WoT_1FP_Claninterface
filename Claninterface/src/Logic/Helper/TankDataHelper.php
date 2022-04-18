@@ -64,6 +64,7 @@ class TankDataHelper
             $tank->premium = $data->is_premium?1:0;
             $tank->tankType_id = $this->getTanksType($data->type);
 
+
             $tank = $this->fillExpectedValues($tank);
             $TanksTable->save($tank);
             $i++;

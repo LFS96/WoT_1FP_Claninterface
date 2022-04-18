@@ -16,6 +16,7 @@ use App\Model\Entity\Player;
 class MeetingregistrationsController extends AppController
 {
     public function setRegistrations($player, $meeting, $status){
+        $this->Authorization->authorize($this->LoggedInUsers,"Member");
        $registrations =  $this->Meetingregistrations->find()->where(["player_id"=> $player, "meeting_id" => $meeting]);
         $registration = null;
        if($registrations->count()){
@@ -33,6 +34,12 @@ class MeetingregistrationsController extends AppController
 
 
     public function calender(){
+        /**
+         * TODO: FERTIG STELLEN;
+         */
+
+        $this->Flash->error("SORRY WIR ARBEITEN NOCH AN DIESEM FEATURE");
+        return $this->redirect(['controller' => 'Inactives', 'action' => 'add', 'home']);
         $players = $this->Meetingregistrations->Players->find("all");
         $players = $players
             ->select([
@@ -43,11 +50,11 @@ class MeetingregistrationsController extends AppController
                 "rankIcon" => "Ranks.name",
                 "expires" => "max(Tokens.expires)"
             ])
-            ->innerJoinWith("tokens")
+            ->innerJoinWith("Tokens")
             ->innerJoinWith("Ranks")
             ->innerJoinWith("Clans")
             ->where([
-                'Tokens.user_id' => $this->Auth->user("id"),
+                'Tokens.user_id' => $this->LoggedInUsers->id,
                 "Tokens.expires >" => $players->func()->now()
             ])
             ->group("Players.id")

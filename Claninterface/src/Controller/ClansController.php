@@ -21,6 +21,7 @@ class ClansController extends AppController
      */
     public function index()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Member");
         $clans = $this->Clans->find("all")->orderDesc("cron")->orderAsc("short");
 
         $this->set(compact('clans'));
@@ -35,6 +36,7 @@ class ClansController extends AppController
      */
     public function view($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Member");
         $clan = $this->Clans->get($id, [
             'contain' => ['Players','Players.Ranks'],
         ]);
@@ -50,6 +52,7 @@ class ClansController extends AppController
     public function add()
     {
         $clan = $this->Clans->newEmptyEntity();
+        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
         if ($this->request->is('post')) {
             $clan = $this->Clans->patchEntity($clan, $this->request->getData(),['fields' => ['short']]);
             $WgApi = new WarGamingHelper();
@@ -114,7 +117,7 @@ class ClansController extends AppController
         $clan = $this->Clans->get($id);
         $clan->cron = $clan->cron?0:1;
         $this->Clans->save($clan);
-        $this->Flash->success("Clan Aktivierung wurde umgeschalten");
+        $this->Flash->success("Clan Aktivierung wurde umgeschaltet");
         return $this->redirect($this->referer());
     }
 

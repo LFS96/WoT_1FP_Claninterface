@@ -87,7 +87,11 @@ if (isset($container)) {
 <body>
 <nav class="navbar navbar-dark bg-dark navbar-expand-md">
     <div class="container">
-        <a class="navbar-brand" href="#">Clan Interface</a>
+        <?php if ($rights == null): ?>
+            <?= $this->Html->link("Clan Interface", ['controller' => 'Inactives', 'action' => 'add', 'home'],["class"=>"navbar-brand"]) ?>
+        <?php else:?>
+            <?= $this->Html->link("Clan Interface", ['controller' => 'Users', 'action' => 'Dashboard'],["class"=>"navbar-brand"]) ?>
+        <?php endif; ?>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -117,15 +121,19 @@ if (isset($container)) {
                     <li class="nav-item">
                         <?= $this->Html->link("Clans", ['controller' => 'Clans', 'action' => 'index'], ["class" => "nav-link"]) ?>
                     </li>
-                    <li class="nav-item">
-                        <?= $this->Html->link("Teamspeak", ['controller' => 'Teamspeaks', 'action' => 'index'], ["class" => "nav-link"]) ?>
-                    </li>
-                    <li class="nav-item">
-                        <?= $this->Html->link("Abmeldungen", ['controller' => 'Inactives', 'action' => 'index'], ["class" => "nav-link"]) ?>
-                    </li>
-                    <li class="nav-item">
-                        <?= $this->Html->link("Veranstaltung", ['controller' => 'Meetings', 'action' => 'index'], ["class" => "nav-link"]) ?>
-                    </li>
+                    <?php if ($user?->canResult("Personal", $auth)->getStatus()): ?>
+                        <li class="nav-item">
+                            <?= $this->Html->link("Teamspeak", ['controller' => 'Teamspeaks', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link("Abmeldungen", ['controller' => 'Inactives', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                        </li>
+                    <?php endif; ?>
+                    <?php if ($user?->canResult("FieldCommander", $auth)->getStatus()): ?>
+                        <li class="nav-item">
+                            <?= $this->Html->link("Veranstaltung", ['controller' => 'Meetings', 'action' => 'index'], ["class" => "nav-link"]) ?>
+                        </li>
+                    <?php endif; ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

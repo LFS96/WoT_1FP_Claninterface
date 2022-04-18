@@ -10,6 +10,7 @@ use App\Model\Entity\Clan;
 use App\Model\Entity\Meeting;
 use App\View\AppView;
 use Cake\Collection\CollectionInterface;
+use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 
 ?>
@@ -35,8 +36,8 @@ use Cake\I18n\Time;
                 $class= "";
                 if(
                     $meeting->date->format("Y-m-d") == date("Y-m-d") &&
-                    $meeting->start->diff(Time::now())->format("%R") == '+' &&
-                    $meeting->end->diff(Time::now())->format("%R") == '-'
+                    date_create_from_format("H:i:s",$meeting->start)->diff(FrozenTime::now())->format("%R") == '+' &&
+                    date_create_from_format("H:i:s",$meeting->end)->diff(FrozenTime::now())->format("%R") == '-'
                 )
                 {
                     $class ="table-success";
@@ -47,8 +48,8 @@ use Cake\I18n\Time;
                 <th><?= $meeting->clan["short"] ?></th>
                 <td><?= h($meeting->name) ?></td>
                 <td data-sort="<?=$meeting->date->format("Ymd")?>"><?= h($meeting->date->format("d.m.Y")) ?></td>
-                <td ><?= h($meeting->start->format("H:i")) ?></td>
-                <td><?= h($meeting->end->format("H:i")) ?></td>
+                <td ><?= h($meeting->start) ?></td>
+                <td><?= h($meeting->end) ?></td>
                 <td><?= $meeting->cloned?"Ja":"Nein" ?></td>
                 <td class="actions">
                     <?= $this->Html->link('<i class="fas fa-list"></i>', ['action' => 'registrations', $meeting->id],['class'=> 'btn btn-dark btn-sm', "escape"=>false]) ?>
@@ -93,8 +94,8 @@ use Cake\I18n\Time;
                 <th><?= $meeting->clan["short"] ?></th>
                 <td><?= h($meeting->name) ?></td>
                 <td data-sort="<?=$meeting->date->format("Ymd")?>"><?= h($meeting->date->format("d.m.Y")) ?></td>
-                <td><?= h($meeting->start->format("H:i")) ?></td>
-                <td><?= h($meeting->end->format("H:i")) ?></td>
+                <td><?= h($meeting->start) ?></td>
+                <td><?= h($meeting->end) ?></td>
                 <td><?= $meeting->cloned?"Ja":"Nein" ?></td>
                 <td class="actions">
                     <?= $this->Html->link('<i class="fas fa-list"></i>', ['action' => 'registrations', $meeting->id],['class'=> 'btn btn-dark btn-sm', "escape"=>false]) ?>

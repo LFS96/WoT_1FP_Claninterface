@@ -140,28 +140,28 @@ public
 static function WnColor($n)
 {
     $class = "wn8 wn8-black";
-    if ($n >= 500) {
+    if ($n >= 300) {
         $class = "wn8 wn8-red";
     }
-    if ($n >= 700) {
+    if ($n >= 600) {
         $class = "wn8 wn8-orange";
     }
     if ($n >= 900) {
         $class = "wn8 wn8-yellow";
     }
-    if ($n >= 1100) {
+    if ($n >= 1250) {
         $class = "wn8 wn8-green";
     }
-    if ($n >= 1350) {
+    if ($n >= 1600) {
         $class = "wn8 wn8-darkgreen";
     }
-    if ($n >= 1550) {
+    if ($n >= 1900) {
         $class = "wn8 wn8-blue";
     }
-    if ($n >= 1850) {
+    if ($n >= 2350) {
         $class = "wn8 wn8-violett";
     }
-    if ($n >= 2050) {
+    if ($n >= 2900) {
         $class = "wn8 wn8-purple";
     }
 

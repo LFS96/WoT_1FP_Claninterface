@@ -9,6 +9,7 @@ use App\Model\Entity\Clan;
 use App\Model\Entity\Player;
 use App\Model\Table\PlayersTable;
 use App\Model\Table\RanksTable;
+use Cake\Cache\Cache;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 use DateTime;
@@ -99,22 +100,25 @@ class WarGamingHelper
          */
         $PlayersTable = TableRegistry::getTableLocator()->get('Players');
 
-        //Step 1: Clan mitgliedschaft austragen
-        /**
-         * @var Player[] $players
-         */
-        $players = $PlayersTable->find("all")->where(["clan_id" => $clan_id]);
-        foreach ($players as $player) {
-            $player->clan_id = null;
-            $player->clan = null;
-            $PlayersTable->save($player);
-        }
 
-        //Step 2: Mitglieder von der WGAPI abfragen
+
+        //Step 1: Mitglieder von der WGAPI abfragen
         $WGClanData = $this->api->get("wot/clans/info", ["clan_id" => $clan_id, "fields" => "members"]);
         if ($WGClanData) {
             $members = $WGClanData->$clan_id->members;
             $anz = 0;
+            if(count($members)){
+                //Step 2: Clan mitgliedschaft austragen
+                /**
+                 * @var Player[] $players
+                 */
+                $players = $PlayersTable->find("all")->where(["clan_id" => $clan_id]);
+                foreach ($players as $player) {
+                    $player->clan_id = null;
+                    $player->clan = null;
+                    $PlayersTable->save($player);
+                }
+            }
 
             $membersList = "";
             foreach ($members as $member) {
@@ -202,13 +206,19 @@ class WarGamingHelper
             ->innerJoinWith("Players")
             ->innerJoinWith("Players.Tokens")
             ->select(["Clans.id", "token" => "min(Tokens.token)"])
-            ->where(["Tokens.expires >" => $Clans->func()->now()])
+            ->where(["Tokens.expires >" => $Clans->func()->now(), "cron" => 1])
             ->group("Clans.id");
 
         $players = array();
+        /**
+         * @var Clan $clan
+         */
         foreach ($Clans as $clan) {
-
-            $resp = $this->api->get("wgn/clans/info/", ["clan_id" => $clan->id, "access_token" => $clan->token, "fields" => "private.online_members", "extra" => "private.online_members"]);
+            $resp = Cache::read('wgn_clans_info_'.$clan->id, 'api');
+            if ($resp === null) {
+                $resp = $this->api->get("wgn/clans/info/", ["clan_id" => $clan->id, "access_token" => $clan->token, "fields" => "private.online_members", "extra" => "private.online_members"]);
+                Cache::write('wgn_clans_info_'.$clan->id, $resp, 'api');
+            }
             if (isset($resp->{$clan->id}->private->online_members)) {
                 $player_list = $resp->{$clan->id}->private->online_members;
                 foreach ($player_list as $player_id) {

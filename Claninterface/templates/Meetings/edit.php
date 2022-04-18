@@ -19,7 +19,7 @@ use App\View\AppView;
 <h1><?= __('Veranstaltung bearbeiten') ?></h1>
 <div class="row">
     <div class="col-4">
-        <?= $this->Form->control('clan_id', ['options' => $clans,"label"=>"Clan"]); ?>
+        <?= $this->Form->control('clan_id', ['options' => $clans,"label"=>"Clan", "class"=>"form-control"]); ?>
     </div>
     <div class="col-8">
         <?= $this->Form->control('name'); ?>
@@ -38,7 +38,7 @@ use App\View\AppView;
 </div>
 <div class="row">
     <div class="col-4">
-        <?= $this->Form->control('cloned',["options"=>[0 => "Nein", 1 => "Ja"],"label" =>"Wiederholen*"]); ?>
+        <?= $this->Form->control('cloned',["options"=>[0 => "Nein", 1 => "Ja"],"label" =>"Wiederholen*", "class"=>"form-control"]); ?>
     </div>
     <div class="col-8"><br />
         * Wiederholen wird auf nein gesetzt, sobald die Nachfolgeveranstaltung angelegt wird.

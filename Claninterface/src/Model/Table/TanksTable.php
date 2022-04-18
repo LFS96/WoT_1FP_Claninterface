@@ -117,7 +117,7 @@ class TanksTable extends Table
     public function buildRules(RulesChecker $rules)
 : RulesChecker
     {
-        $rules->add($rules->existsIn(['tankType_id'], 'TankTypes'));
+        $rules->add($rules->existsIn(['tankType_id'], 'Tanktypes'));
 
         return $rules;
     }

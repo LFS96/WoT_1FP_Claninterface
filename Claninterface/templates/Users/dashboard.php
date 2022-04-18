@@ -31,7 +31,7 @@ $addAccountUrl = "https://" . Configure::read('Wargaming.server') . "/wot/auth/l
                         <tr><td>Clangruppen-Offizier</td><td><?= $user?->canResult("Officer", $auth)->getStatus() ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
                         <tr><td>Clangruppen-Personaloffizier</td><td><?= $user?->canResult("Personal", $auth)->getStatus() ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
                         <tr><td>Clangruppen-Feldkommandant</td><td><?= $user?->canResult("FieldCommander", $auth)->getStatus()? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
-                        <tr><td>Clangruppen-Commandant</td><td><?= $user?->canResult("Commander", $auth)->getStatus() ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
+                        <tr><td>Clangruppen-Kommandant</td><td><?= $user?->canResult("Commander", $auth)->getStatus() ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
                         <tr><td>Administrator</td><td><?= $user?->canResult("Admin", $auth)->getStatus() ? "<i class='bi bi-check-circle-fill'></i> JA" : "<i class='bi bi-slash-circle'></i> NEIN" ?></td></tr>
                     </tbody>
                 </table>
@@ -42,7 +42,7 @@ $addAccountUrl = "https://" . Configure::read('Wargaming.server') . "/wot/auth/l
 
 <h3>Verbundene WoT-Accounts</h3>
 Das Claninterface benutzt den Rang der verbundenen WoT-Accounts, um deine Berechtigungen du im Claninterface festzulegen.
-Wir verwenden das Wargaming-OpenID verfahren, bei diesem Bestätigt Wargaming, dass du der Besitzer des WoT-Accounts bis.
+Wir verwenden das Wargaming-OpenID verfahren, bei diesem bestätigt Wargaming, dass du der Besitzer des WoT-Accounts bis.
 <b>Wir erhalten weder deine E-Mail-Adresse noch dein
     Passwort</b>, alle 14 Tage muss die Verbindung erneut bestätigt werden.<br/>
 <u>Folgende Daten erhalten und nutzen wir:</u>
@@ -109,8 +109,8 @@ Wir verwenden das Wargaming-OpenID verfahren, bei diesem Bestätigt Wargaming, d
                 <td><?= $registration["player"]->nick ?></td>
                 <td><?= $registration["meeting"]->name ?> <small>[<?= $registration["meeting"]->clan->short ?>]</small>
                 </td>
-                <td><?= $registration["meeting"]->date->format("d.m.Y") ?> <?= $registration["meeting"]->start->format("H:i") ?>
-                    - <?= $registration["meeting"]->end->format("H:i") ?> </td>
+                <td><?= $registration["meeting"]->date->format("d.m.Y") ?> <?= $registration["meeting"]->start ?>
+                    - <?= $registration["meeting"]->end?> </td>
                 <td><span
                         class="badge bg-<?= MeetingRegistrationHelper::$status[$registration["status"]]["class"] ?>"><?= MeetingRegistrationHelper::$status[$registration["status"]]["icon"] ?> <?= MeetingRegistrationHelper::$status[$registration["status"]]["display"] ?></span>
                 </td>

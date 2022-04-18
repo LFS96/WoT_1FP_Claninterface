@@ -86,7 +86,7 @@ class PlayerDataHelper
                                 $statistic->date_b = date("Y-m-d", $statDate);
                                 $StatisticTables->save($statistic);
                             }else{
-                                $statistic = $StatisticTables->newEmptyEntity()(
+                                $statistic = $StatisticTables->newEntity(
                                     [
                                         "player_id" => $player->id,
                                         "tank_id" => $tankStat->tank_id,

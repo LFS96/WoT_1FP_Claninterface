@@ -23,6 +23,7 @@ class InactivesController extends AppController
      */
     public function index()
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Personal");
         $this->set('inactives',$this->Inactives->find("all")->contain(["Players","Players.Clans"])->innerJoinWith("Players.Clans"));
     }
 
@@ -35,6 +36,7 @@ class InactivesController extends AppController
      */
     public function view($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Personal");
         $inactive = $this->Inactives->get($id, [
             'contain' => ['Players'],
         ]);
@@ -104,6 +106,7 @@ class InactivesController extends AppController
      */
     public function edit($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Personal");
         $inactive = $this->Inactives->get($id, [
             'contain' => [],
         ]);
@@ -129,6 +132,7 @@ class InactivesController extends AppController
      */
     public function delete($id = null)
     {
+        $this->Authorization->authorize($this->LoggedInUsers,"Personal");
         $this->request->allowMethod(['post', 'delete']);
         $inactive = $this->Inactives->get($id);
         if ($this->Inactives->delete($inactive)) {
@@ -139,15 +143,7 @@ class InactivesController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
-    public function isAuthorized($user)
-    {
 
-        if ($this->permissionLevel >= 8){
-            return true;
-        }
-
-        return false;
-    }
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);

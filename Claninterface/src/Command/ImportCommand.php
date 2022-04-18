@@ -13,11 +13,13 @@ class ImportCommand extends Command
 
     public function  execute(Arguments $args, ConsoleIo $io)
     {
-        $players = $this->importPlayer();
-        $io->out("Es wurden $players Spieler gefunden.");
 
         $tanks = $this->importTanks();
         $io->out("Es wurden $tanks Panzer gefunden.");
+
+        $players = $this->importPlayer();
+        $io->out("Es wurden $players Spieler gefunden.");
+
 
         $clans = $this->renewClanData();
         $io->out("Clandaten erneuert");
