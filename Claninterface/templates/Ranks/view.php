@@ -11,7 +11,7 @@ use App\View\AppView;
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
-        <?php if ($permissionLevel >= 10): ?>
+        <?php if ($user?->canResult("Admin", $auth)->getStatus()):  ?>
         <li><?= $this->Html->link(__('Edit Rank'), ['action' => 'edit', $rank->id]) ?> </li>
         <li><?= $this->Form->postLink(__('Delete Rank'), ['action' => 'delete', $rank->id], ['confirm' => __('Are you sure you want to delete # {0}?', $rank->id)]) ?> </li>
        <?php endif; ?>

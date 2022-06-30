@@ -10,6 +10,7 @@ use App\Logic\Helper\RanksHelper;
 use App\Logic\Helper\WarGamingHelper;
 use App\Model\Entity\Clan;
 use App\Model\Entity\Player;
+use Cake\Cache\Cache;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
@@ -32,8 +33,8 @@ class PlayersController extends AppController
      */
     public function view($id, $battletype = false)
     {
-        $this->Authorization->authorize($this->LoggedInUsers,"Member");
-        if($battletype == false){
+        $this->Authorization->authorize($this->LoggedInUsers, "Member");
+        if ($battletype == false) {
             $battletype = StatisticsConfigHelper::$BattleTypes[0];
         }
 
@@ -48,28 +49,30 @@ class PlayersController extends AppController
         $stats->where(["battletype" => "$battletype", "date_b" => $newestData, "player_id" => $id]);
         $this->set('stats', $stats);
         $this->set('player', $player);
-        $this->set("battletype",$battletype);
+        $this->set("battletype", $battletype);
 
     }
 
     public function importStatistic($clan)
     {
-        $this->Authorization->authorize($this->LoggedInUsers,"Admin");
+        $this->Authorization->authorize($this->LoggedInUsers, "Admin");
         $PlayerHelper = new PlayerDataHelper();
         $c = $PlayerHelper->importPlayerStatistic($clan);
         $this->Flash->success("Es wurden $c Datensätze geladen.");
         return $this->redirect($this->referer());
     }
-    public function tankStats($player, $tank,$battletype = false)
+
+    public function tankStats($player, $tank, $battletype = false)
     {
-        $this->Authorization->authorize($this->LoggedInUsers,"Member");
-        if($battletype == false){
+        $this->Authorization->authorize($this->LoggedInUsers, "Member");
+        if ($battletype == false) {
             $battletype = StatisticsConfigHelper::$BattleTypes[0];
         }
-        $this->set("Player",$this->Players->get($player));
-        $this->set("stats", $this->Players->Statistics->find("all")->contain(["Tanks"])->where(["player_id" => $player,"tank_id"=>$tank,"battletype"=>"$battletype"])->orderDesc("date")->limit(100)->toArray());
-        $this->set("battletype",$battletype);
+        $this->set("Player", $this->Players->get($player));
+        $this->set("stats", $this->Players->Statistics->find("all")->contain(["Tanks"])->where(["player_id" => $player, "tank_id" => $tank, "battletype" => "$battletype"])->orderDesc("date")->limit(100)->toArray());
+        $this->set("battletype", $battletype);
     }
+
     public function tsRank()
     {
         $this->Authorization->skipAuthorization();
@@ -105,42 +108,54 @@ class PlayersController extends AppController
         }
 
     }
-    public function tree(){
-        $this->Authorization->authorize($this->LoggedInUsers,"Member");
-        $wgh = new WarGamingHelper();
-        $players = $this->Players->find("all")->contain(["Clans"]);
 
-        $i = 0;
-        $j = 0;
-        $data = array();
-        /** @var Player $player */
-        foreach ($players as $player){
-            if($j == 0){
-                $data[$i] ="";
+    public function tree()
+    {
+        $this->Authorization->authorize($this->LoggedInUsers, "Member");
+
+        $score = Cache::read('players_tree');
+        if ($score === null) {
+            $score = array();
+
+
+            $wgh = new WarGamingHelper();
+            $players = $this->Players->find("all")->contain(["Clans"]);
+
+            $i = 0;
+            $j = 0;
+            $data = array();
+            /** @var Player $player */
+            foreach ($players as $player) {
+                if ($j == 0) {
+                    $data[$i] = "";
+                }
+                $data[$i] .= $player->id . ",";
+                $j++;
+                if ($j >= 100) {
+                    $i++;
+                    $j = 0;
+                }
             }
-           $data[$i] .= $player->id.",";
-           $j++;
-           if($j >= 100){
-               $i++; $j=0;
-           }
-        }
-        $score = array();
 
-        foreach ($data as $set){
-            $wgh->getPlayersInfos($set);
-            $res = $wgh->getAccountsInfo();
-            foreach ($res as $p =>$d){
-                $tree =$d->statistics->trees_cut / $d->statistics->all->battles;
-                $score [] = array($tree, $d->nickname);
+            foreach ($data as $set) {
+                $wgh->getPlayersInfos($set);
+                $res = $wgh->getAccountsInfo();
+                foreach ($res as $p => $d) {
+
+                    $trees_cut = $d->statistics->trees_cut;
+                    $battles = $d->statistics->all->battles;
+                    $account_age = (time() - $d->created_at) / (365.25 * 3600 * 24);
+                    $nickname = $d->nickname;
+
+                    $score [] = [$d->nickname, round($trees_cut / $battles, 3), round($trees_cut / $account_age, 3), $trees_cut];
+                }
+
             }
-
+            $price = array_column($score, 1);
+            array_multisort($price, SORT_DESC, $score);
+            Cache::write('players_tree', $score);
         }
-        $price = array_column($score, 0);
-        array_multisort($price, SORT_DESC, $score);
-        foreach ($score as $s){
-            echo round($s[0],4)." - ".$s[1]."<br />";
-        }
-
+        $this->set("tree", $score);
     }
 
     public function isAuthorized($user)
@@ -166,8 +181,8 @@ class PlayersController extends AppController
                 'Tokens.user_id' => $user["id"],
                 "Tokens.expires >" => $players->func()->now()
             ]);
-        foreach ($players as $player){
-            if ($player->id ==  $this->request->getParam('pass.0')) {
+        foreach ($players as $player) {
+            if ($player->id == $this->request->getParam('pass.0')) {
                 return true;
             }
         }
@@ -175,7 +190,7 @@ class PlayersController extends AppController
         if ($pl >= 5 && !in_array($action, ["importStatistic"])) {
             return true;
         }
-        if ($pl >= 8 ) {
+        if ($pl >= 8) {
             return true;
         }
         return false;

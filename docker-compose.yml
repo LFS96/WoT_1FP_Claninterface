@@ -19,6 +19,12 @@ services:
       - DEBUG=true
     networks:
       - claninterface
+  cron:
+    build:
+      context: ./
+      dockerfile: DockerfileCron
+    networks:
+      - qm
   claninterface_mysql:
     image: "mariadb"
     #volumes:

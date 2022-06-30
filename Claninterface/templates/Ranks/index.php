@@ -35,7 +35,7 @@ use Cake\Collection\CollectionInterface;
                 <td class="actions">
                     <?= $this->Html->link(__('View'), ['action' => 'view', $rank->id]) ?>
 
-                    <?php if ($permissionLevel >= 10): ?>
+                    <?php if ($user?->canResult("Admin", $auth)->getStatus()): ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $rank->id]) ?>
                         <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $rank->id], ['confirm' => __('Are you sure you want to delete # {0}?', $rank->id)]) ?>
                     <?php endif; ?>

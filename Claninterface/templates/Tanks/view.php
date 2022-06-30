@@ -102,8 +102,8 @@ use App\View\AppView;
         ?>
 
         <tr>
-            <td><?= $user?->canResult("FieldCommander",$auth)->getStatus()? $this->Html->link($stat->player->clan->short,["controller"=>"clans","action"=>"view", $stat->player->clan_id]):$stat->player->clan->short ?></td>
-            <td><?= $user?->canResult("FieldCommander", $auth)->getStatus()? $this->Html->link($stat->player->nick,["controller"=>"players","action"=>"view", $stat->player->id,$battletype]): $stat->player->nick ?></td>
+            <td><?= $this->Html->link($stat->player->clan->short,["controller"=>"clans","action"=>"view", $stat->player->clan_id]) ?></td>
+            <td><?= $this->Html->link($stat->player->nick,["controller"=>"players","action"=>"view", $stat->player->id,$battletype])?></td>
             <td data-sort="<?=  $stat->battle ?>"><?= $this->Number->format( $stat->battle  , ["locale" => 'de_DE']);?></td>
             <td data-sort="<?= $sieg ?>" class="<?= WN8Helper::SiegColor($sieg) ?>"><?= $this->Number->format( $sieg , ["locale" => 'de_DE', "precision"=>2]); ?></td>
             <td data-sort="<?= $stat->damage /$stat->battle ?>"><?=$this->Number->format(  $stat->damage /$stat->battle  , ["locale" => 'de_DE', "precision"=>2]);?></td>

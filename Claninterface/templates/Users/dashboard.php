@@ -36,6 +36,10 @@ $addAccountUrl = "https://" . Configure::read('Wargaming.server') . "/wot/auth/l
                     </tbody>
                 </table>
             <?php } ?>
+                <?php if ($user?->canResult("Member", $auth)->getStatus()){
+                 echo $this->Html->link("Zum Baumfäller Wettbewerb",['controller' => 'Players', 'action' => 'tree'])
+                ?>
+            <?php } ?>
         </span>
     </div>
 </div>

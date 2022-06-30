@@ -108,8 +108,11 @@ return [
 
         'default' => [
             'className' => FileEngine::class,
-            'path' => CACHE,
+            'path' => CACHE.'default/',
             'url' => env('CACHE_DEFAULT_URL'),
+            'serialize' => true,
+
+            'duration' => '+720 minutes',
         ],
 
         /*

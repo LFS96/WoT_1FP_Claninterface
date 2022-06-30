@@ -29,11 +29,11 @@ use Cake\Collection\CollectionInterface;
                         <div class="col-12">
                             <?= $this->Html->link('<i class="bi bi-info-circle"></i> Details', ['action' => 'view', $clan->id], ["class" => "btn btn-info btn-sm", "escape" => false]) ?>
                             <?php if ($user?->canResult("Admin",$auth)->getStatus()): ?>
-                            <?= $this->Form->postLink('<i class="bi bi-graph-up"></i> Spieler Infos abrufen', ['action' => 'getClanMembers', $clan->id], ["class" => "btn btn-secondary  btn-sm", "escape" => false]) ?>
-                            <?= $this->Form->postLink('<i class="bi bi-graph-up"></i> Spieler Statisticen abrufen', ["controller" => "players", 'action' => 'importStatistic', $clan->id], ["class" => "btn btn-secondary  btn-sm", "escape" => false]) ?>
-                            <?= $this->Form->postLink('<i class="bi bi-cloud-arrow-down-fill"></i> Clandaten abrufen', ['action' => 'renew', $clan->id], ["class" => "btn btn-secondary  btn-sm", "escape" => false]) ?>
-                            <?= $this->Form->postLink('<i class="bi bi-trash"></i>  Löschen', ['action' => 'delete', $clan->id], ['confirm' => __('Wollen Sie den Clan [' . $clan->short . '] wirklich aus dem Interface löschen löschen?', $clan->id), "class" => "btn btn-danger  btn-sm", "escape" => false]) ?>
-                            <?= $this->Form->postLink('<i class="bi bi-arrow-down-up"></i> ' . ($clan->cron ? "Deaktivieren" : "Aktivieren"), ['action' => 'toggle', $clan->id], ['confirm' => __('Wollen Sie den Clan [' . $clan->short . '] wirklich in der automatischen Verfolgung umschalten?', $clan->id), "class" => "btn btn-warning  btn-sm", "escape" => false]) ?>
+                                <?= $this->Form->postLink('<i class="bi bi-graph-up"></i> Spieler Infos abrufen', ['action' => 'getClanMembers', $clan->id], ["class" => "btn btn-secondary  btn-sm", "escape" => false]) ?>
+                                <?= $this->Form->postLink('<i class="bi bi-graph-up"></i> Spieler Statisticen abrufen', ["controller" => "players", 'action' => 'importStatistic', $clan->id], ["class" => "btn btn-secondary  btn-sm", "escape" => false]) ?>
+                                <?= $this->Form->postLink('<i class="bi bi-cloud-arrow-down-fill"></i> Clandaten abrufen', ['action' => 'renew', $clan->id], ["class" => "btn btn-secondary  btn-sm", "escape" => false]) ?>
+                                <?= $this->Form->postLink('<i class="bi bi-trash"></i>  Löschen', ['action' => 'delete', $clan->id], ['confirm' => __('Wollen Sie den Clan [' . $clan->short . '] wirklich aus dem Interface löschen löschen?', $clan->id), "class" => "btn btn-danger  btn-sm", "escape" => false]) ?>
+                                <?= $this->Form->postLink('<i class="bi bi-arrow-down-up"></i> ' . ($clan->cron ? "Deaktivieren" : "Aktivieren"), ['action' => 'toggle', $clan->id], ['confirm' => __('Wollen Sie den Clan [' . $clan->short . '] wirklich in der automatischen Verfolgung umschalten?', $clan->id), "class" => "btn btn-warning  btn-sm", "escape" => false]) ?>
                             <?php endif; ?>
                         </div>
                     </div>

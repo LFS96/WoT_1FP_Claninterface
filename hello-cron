@@ -1,0 +1,14 @@
+# must be ended with a new line "LF" (Unix) and not "CRLF" (Windows)
+* * * * * echo hello > /proc/1/fd/1 2>/proc/1/fd/2
+# An empty line is required at the end of this file for a valid cron file.
+#meine Crontab Datei, gerne anpassen
+# m h  dom mon dow   command
+
+*/3 * * * * wget http://claninterface_amp/Import/Teamspeak
+0 3,15,23 * * * wget http://claninterface_amp/import/import
+15 16,17,18,19,20,21,22 * * * wget http://claninterface_amp/import/notice
+0 3 * * * wget http://claninterface_amp/import/stats
+0 1 */7 * * wget http://claninterface_amp/import/clean
+*/6 * * * * wget http://claninterface_amp/import/meeting
+
+claninterface_amp
