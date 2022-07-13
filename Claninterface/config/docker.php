@@ -15,6 +15,18 @@ return [
      */
     'debug' => filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
     /*
+    * Security and encryption configuration
+    *
+    * - salt - A random string used in security hashing methods.
+    *   The salt value is also used as the encryption key.
+    *   You should treat it as extremely sensitive data.
+    */
+    'Security' => [
+        'salt' => env('SECURITY_SALT', '__SALT__'),
+    ],
+
+
+    /*
      * Connection information used by the ORM to connect
      * to your application's datastores.
      *
@@ -33,7 +45,7 @@ return [
             'username' => env("DB_USER",'root'),
             'password' => env("DB_PASS",'123456'),
 
-            'database' => env("DB_DATABASE",'budget'),
+            'database' => env("DB_DATABASE",'claninterface'),
 
             /*
              * You can use a DSN string to set the entire configuration
@@ -52,15 +64,34 @@ return [
     'EmailTransport' => [
         'default' => [
             'host' => env("EMAIL_HOST",'localhost'),
-            'port' => env("EMAIL_USER",25),
+            'port' => env("EMAIL_PORT",25),
             'username' => env("EMAIL_USER"),
             'password' => env("EMAIL_PASS"),
             'client' => env("EMAIL_CLIENT"),
             'url' => env('EMAIL_TRANSPORT_DEFAULT_URL'),
+            'tls' => env("EMAIL_TLS",true)
+        ],
+    ],
+
+    'Email' => [
+        'default' => [
+            'transport' => 'default',
+            'from' => [env("EMAIL_FROM_MAIL",'some@email.com') => env("EMAIL_FROM_NAME","WoT-Claninterface")],
+            /*
+             * Will by default be set to config value of App.encoding, if that exists otherwise to UTF-8.
+             */
+            //'charset' => 'utf-8',
+            //'headerCharset' => 'utf-8',
         ],
     ],
 
 
+    "Provider"=>[ // für die rechtliches Seite
+        "name" => "your Email",
+        "mail" => "your Mail",
+        "tel"  => "your Tel"
+
+    ],
 /*
  * Information where to find the Teamspeak
  * - Host: IP or URL
@@ -68,9 +99,9 @@ return [
  * - UID: UID of the virtual Server
  */
     'TeamspeakQueryConnection' => [
-        'host' => '127.0.0.1',
-        'port' => 10011,
-        'uid' => '1',
+        'host' => env("TSQ_HOST",'127.0.0.1'),
+        'port' => env("TSQ_PORT",10011),
+        'uid' => env("TSQ_UID",'1'),
     ],
     /*
      * Login Data for the TeamspeakQuery
@@ -79,9 +110,9 @@ return [
      * - LoginName: Name Webinterface will use (extended: by  unique ID)
      */
     'TeamspeakQueryLogin' => [
-        'user' => 'TeamspeakQueryLoginUser',
-        'pass' => 'TeamspeakQueryLoginPasswd',
-        'loginName' => 'WebInterface by LFS96'
+        'user' => env("TSQ_USER",'TeamspeakQueryLoginUser'),
+        'pass' => env("TSQ_PASS",'TeamspeakQueryLoginPasswd'),
+        'loginName' => env("TSQ_NICK",'WebInterface by LFS96')
     ],
     /*
      * Servergruppen die Admins sind und welche über ereignisse informiert werden sollen
@@ -98,7 +129,7 @@ return [
      * - server: url of server
      */
     "Wargaming" => [
-        "authkey" => '0123456789abcdef0123456789abcdef',
+        "authkey" => env("WGAPI_AUTHKEY",'0123456789abcdef0123456789abcdef'),
         'expectedValues' => 'https://static.modxvm.com/wn8-data-exp/json/wn8exp.json',
         'lang' => (new DE()),
         'server' => (new EU(""))
@@ -113,9 +144,8 @@ return [
      * Footer message block
      */
     'footer' => [
-        'enable' => true,
-        'text' => "
-                Hier kann eure Footer Nachricht stehen.",
+        'enable' => env("FOOTER_ENABLE",true),
+        'text' => env("FOOTER_TEXT","Hier kann eure Footer Nachricht stehen."),
         'link' => [
             'text' => "Google",
             'url' => 'https://www.google.com/',

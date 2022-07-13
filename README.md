@@ -1,5 +1,20 @@
 # WoT Claninterface by LFS96
 
+###########################################################################################  
+**Projekt wird nicht weiter verfolgt**  
+Leider werde ich in absehbarer Zeit keine Energie mehr in dieses Projekt investieren können.  
+Daher kommen in den nächsten Tagen/Wochen nur noch Problemlösungen für die aktuelle Version.  
+Sobald diese stabil genug ist, wird das Projekt vorläufig eingestellt.
+
+TODOs:
+- bessere Implementierung des OpenID-Verfahrens
+- Einführen von automatisierten Tests 
+- Bessere Konfiguration (aktuell viel Handarbeit, teilweise Hardcoded)
+- DSGVO Auskunft automatisieren
+- Dokumentation
+
+############################################################################################
+
 Das WoT-Claninterface wurde für die 1FP-Clangruppe entwickelt.
 Die meisten Anpassungen wurden auf diese Clangruppe optimiert.
 
@@ -39,15 +54,14 @@ _PS: Falls ich mal wieder die SQL-Dateien nicht erneuert habe, bitte melden._
 ## Einrichtung
 
 ### Vorraussetzung
-Diese Voraussetzungen sind die Einstellungen meines Entwicklungssystems
+Diese Voraussetzungen sind die Einstellungen meines Entwicklungssystems.  
 
-### Abhängigkeiten:
-Diese Voraussetzungen sind die Einstellungen meines Entwicklungssystems
+**NEU:** ![](https://img.shields.io/badge/Docker-grey?logo=docker) Configurator ist jetzt verfügbar. 
 
 
-![](https://img.shields.io/badge/PHP-7.3+-grey?logo=php)
+![](https://img.shields.io/badge/PHP-8.1+-grey?logo=php)
 
-![](https://img.shields.io/badge/CakePHP-3.9-grey?logo=cakephp)
+![](https://img.shields.io/badge/CakePHP-4.3-grey?logo=cakephp)
 
 ![](https://img.shields.io/badge/Apache-2.4.46-grey?logo=apache)
 
@@ -56,7 +70,9 @@ Diese Voraussetzungen sind die Einstellungen meines Entwicklungssystems
 ## Config
 siehe `Claninterface/config` dort gibt es Example Dateien, diese einfach anpassen.
 Der Datenbank aufbau ist als `CakePHP Migration` verfügbar, zusätzlich gibt es ein paar Dateien im `sql/` Ordner.
-Einige Aufrufe müssen regelmäßig durchgeführt werden, ich habe ein beispiel für die Einrichtug in crontab unter `cron_example` abgelegt.
+Einige Aufrufe müssen regelmäßig durchgeführt werden, ich habe ein Beispiel für die Einrichtung in crontab unter `cron_example` abgelegt.
+
+PS: Cron ist auch in der Docker Konfiguration enthalten.
 
 ## Referenzen
 

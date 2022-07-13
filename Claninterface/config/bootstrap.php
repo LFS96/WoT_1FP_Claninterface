@@ -88,6 +88,12 @@ if (file_exists(CONFIG . 'app_local.php')) {
     Configure::load('app_local');
 }
 
+// TODO: Combine both Deployment ways
+//Used in deplyment with docker
+if (file_exists(CONFIG . 'docker.php')) {
+    Configure::load('docker');
+}
+
 //Used in manual deployment
 if (file_exists(CONFIG . 'external_api.php')) {
     Configure::load('external_api');
@@ -96,11 +102,7 @@ if (file_exists(CONFIG . 'clan_settings.php')) {
     Configure::load('clan_settings');
 }
 
-// TODO: Combine both Deployment ways
-//Used in deplyment with docker
-if (file_exists(CONFIG . 'docker.php')) {
-    Configure::load('docker');
-}
+
 
 
 /*
