@@ -11,15 +11,10 @@ services:
       - "1443:443" # nginx reverse Proxy
       # - "80:80"    # standalone
       # - "443:443"  # standalone
-    environment:
-      - DB_HOST=claninterface_mysql
-      - DB_USER=root
-      - DB_PASS=123456
-      - DB_DATABASE=claninterface
-      - DEBUG=true
+    env_file: .env
     networks:
       - claninterface
-    network_mode: host
+    #network_mode: host
   cron:
     build:
       context: ./
@@ -28,8 +23,8 @@ services:
       - claninterface
   claninterface_mysql:
     image: "mariadb"
-    #volumes:
-    #  - ./data/db:/var/lib/mysql
+    volumes:
+      - ./data/db:/var/lib/mysql
     ports:
       - "3306"
     environment:

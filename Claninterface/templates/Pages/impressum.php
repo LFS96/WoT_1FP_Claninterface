@@ -62,7 +62,7 @@ Daten werden nur erhoben soweit dies notwendig ist. um einzelne Dienste bereitzu
 Daten werden falls notwendig aus beiden Quellen zusammengeführt.<br />
 <br />
 Nicht mehr benötigte Datenbestände werden regelmäßig gelöscht, dies ist ins besonders der Fall, wenn ein Spieler den Clan verlässt.<br />
-Sie können der Nutzung der Wargaming-Developer-API wiedersprechen , bitte wenden Sie sich dazu an den Support bei Wargaming.<br />
+Sie können der Nutzung der Wargaming-Developer-API wiedersprechen, bitte wenden Sie sich dazu an den Support bei Wargaming.<br />
 Sie können der Auswertung des Teamspeak-Server  wiedersprechen, wenden Sie sich dazu an die obenstehende E-Mail.<br />
 Mit dem Widerspruch gegen die Auswertung des Teamspeak-Server, erlischt auch das Nutzungsrecht des Teamspeak-Servers. <br />
 

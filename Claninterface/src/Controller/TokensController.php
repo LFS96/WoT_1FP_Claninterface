@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use App\Logic\Helper\StringHelper;
+use App\Logic\Helper\WarGamingHelper;
 use Cake\Event\EventInterface;
 
 /**
@@ -89,11 +90,16 @@ class TokensController extends AppController
             $token->token = $data["access_token"];
             $token->expires = \DateTime::createFromFormat('U', $data["expires_at"]);
             $token->user_id = $this->LoggedInUsers->id;
-            $saved = $this->Tokens->save($token);
-            if ($saved) {
-                $this->Flash->success("Wir haben den Token gespeichert.");
+            $wgn = new WarGamingHelper();
+            if( $wgn->validateApiToken($data["access_token"], $data["account_id"])) {
+                $saved = $this->Tokens->save($token);
+                if ($saved) {
+                    $this->Flash->success("Wir haben den Token gespeichert.");
+                } else {
+                    $this->Flash->error("Leider gabe es einen Fehler");
+                }
             } else {
-                $this->Flash->error("Leider gabe es einen Fehler");
+                $this->Flash->error("Der Token ist nicht gültig.");
             }
         }else {
             $this->Flash->error("Es gab einen Fehler bei der Anmeldung");
@@ -131,13 +137,20 @@ class TokensController extends AppController
             $token->token = $data["access_token"];
             $token->expires = \DateTime::createFromFormat('U', $data["expires_at"]);
             $token->user_id = $user->id;
-            $saved = $this->Tokens->save($token);
-            if ($saved) {
-                $this->Authentication->setIdentity($user);
-                $this->Flash->success("Wir haben den Token gespeichert.");
-                return $this->redirect(['controller' => 'Users','action' => 'dashboard']);
-            } else {
-                $this->Flash->error("Leider gabe es einen Fehler");
+
+            $wgn = new WarGamingHelper();
+            if( $wgn->validateApiToken($data["access_token"], $data["account_id"])) {
+
+                $saved = $this->Tokens->save($token);
+                if ($saved) {
+                    $this->Authentication->setIdentity($user);
+                    $this->Flash->success("Wir haben den Token gespeichert.");
+                    return $this->redirect(['controller' => 'Users', 'action' => 'dashboard']);
+                } else {
+                    $this->Flash->error("Leider gabe es einen Fehler");
+                }
+            }else {
+                $this->Flash->error("Der Token ist nicht gültig");
             }
         }else {
             $this->Flash->error("Es gab einen Fehler bei der Anmeldung");

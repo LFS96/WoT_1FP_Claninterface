@@ -81,7 +81,7 @@ return [
         ],
     ],
     "Provider"=>[ // für die rechtliches Seite
-        "name" => "your Email",
+        "name" => "your Name",
         "mail" => "your Mail",
         "tel"  => "your Tel"
 

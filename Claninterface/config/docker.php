@@ -67,8 +67,8 @@ return [
             'port' => env("EMAIL_PORT",25),
             'username' => env("EMAIL_USER"),
             'password' => env("EMAIL_PASS"),
-            'client' => env("EMAIL_CLIENT"),
-            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL'),
+            'client' => env("EMAIL_CLIENT",null),
+            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL',null),
             'tls' => env("EMAIL_TLS",true)
         ],
     ],
@@ -87,10 +87,9 @@ return [
 
 
     "Provider"=>[ // für die rechtliches Seite
-        "name" => "your Email",
-        "mail" => "your Mail",
-        "tel"  => "your Tel"
-
+        "name" => env("PROVIDER_NAME","your Name"),
+        "mail" => env("PROVIDER_MAIL","your Mail"),
+        "tel"  => env("PROVIDER_TEL","your Tel")
     ],
 /*
  * Information where to find the Teamspeak
@@ -118,8 +117,8 @@ return [
      * Servergruppen die Admins sind und welche über ereignisse informiert werden sollen
      */
     'Teamspeak' => [
-        'AdminGroups' => [1, 2, 3], //Admin können nicht gekickt/gebannt werden
-        'NoticeGroups' => [4] // Werden durch das Claninterface direkt im TS informiert
+        'AdminGroups' => json_decode(env("TEAMSPEAK_ADMIN_GROUPS"),TRUE), //Admin können nicht gekickt/gebannt werden
+        'NoticeGroups' => json_decode(env("TEAMSPEAK_NOTICE_GROUPS"),TRUE) // Werden durch das Claninterface direkt im TS informiert
     ],
     /*
      * Wargaming Developer API connection

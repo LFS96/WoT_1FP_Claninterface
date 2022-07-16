@@ -281,4 +281,12 @@ class WarGamingHelper
 
         return floor($sum / (60*60*24));
     }
+
+    public function validateApiToken($token, $player_id){
+        $resp = $this->api->get("wgn/account/info/", ["access_token" => $token, "account_id" => $player_id, 'fields' =>'account_id,nickname,private.credits']);
+        if(isset($resp?->{$player_id}?->private?->credits) && $resp->{$player_id}->private->credits > 0){
+            return true;
+        }
+        return false;
+    }
 }
