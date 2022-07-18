@@ -93,7 +93,7 @@ class WarGamingHelper
      * @return false|int
      * @throws \Exception
      */
-    public function updateClanMembers($clan_id)
+    public function updateClanMembers($clan_id): bool|int
     {
         /**
          * @var PlayersTable $PlayersTable
@@ -101,13 +101,16 @@ class WarGamingHelper
         $PlayersTable = TableRegistry::getTableLocator()->get('Players');
 
 
-
         //Step 1: Mitglieder von der WGAPI abfragen
-        $WGClanData = $this->api->get("wot/clans/info", ["clan_id" => $clan_id, "fields" => "members"]);
+        try {
+            $WGClanData = $this->api->get("wot/clans/info", ["clan_id" => $clan_id, "fields" => "members"]);
+        } catch (\Exception $e) {
+            return false;
+        }
         if ($WGClanData) {
             $members = $WGClanData->$clan_id->members;
             $anz = 0;
-            if(count($members)){
+            if (count($members)) {
                 //Step 2: Clan mitgliedschaft austragen
                 /**
                  * @var Player[] $players
@@ -118,6 +121,8 @@ class WarGamingHelper
                     $player->clan = null;
                     $PlayersTable->save($player);
                 }
+                unset($players);
+
             }
 
             $membersList = "";
@@ -201,11 +206,12 @@ class WarGamingHelper
     {
         $PLayersTable = TableRegistry::getTableLocator()->get('Players');
         $ClansTable = TableRegistry::getTableLocator()->get('Clans');
+        $TokenTable = TableRegistry::getTableLocator()->get('Tokens');
         $Clans = $ClansTable->find("all");
         $Clans = $Clans
             ->innerJoinWith("Players")
             ->innerJoinWith("Players.Tokens")
-            ->select(["Clans.id", "token" => "min(Tokens.token)"])
+            ->select(["Clans.id"])
             ->where(["Tokens.expires >" => $Clans->func()->now(), "cron" => 1])
             ->group("Clans.id");
 
@@ -214,10 +220,31 @@ class WarGamingHelper
          * @var Clan $clan
          */
         foreach ($Clans as $clan) {
-            $resp = Cache::read('wgn_clans_info_'.$clan->id, 'api');
+            $resp = Cache::read('wgn_clans_info_' . $clan->id, 'api');
             if ($resp === null) {
-                $resp = $this->api->get("wgn/clans/info/", ["clan_id" => $clan->id, "access_token" => $clan->token, "fields" => "private.online_members", "extra" => "private.online_members"]);
-                Cache::write('wgn_clans_info_'.$clan->id, $resp, 'api');
+                $validToken = $ClansTable->find("all");
+
+
+                $validToken = $validToken
+                    ->innerJoinWith("Players")
+                    ->innerJoinWith("Players.Tokens")
+                    ->select(["Clans.id", "token" => "Tokens.token"])
+                    ->where(["Tokens.expires >" => $validToken->func()->now(), "cron" => 1, "Clans.id" => $clan->id]);
+
+
+                foreach ($validToken as $token) {
+                    try {
+                        $resp = $this->api->get("wot/clans/info/", ["clan_id" => $clan->id, "access_token" => $token->token, "fields" => "private.online_members", "extra" => "private.online_members"]);
+                        Cache::write('wgn_clans_info_' . $clan->id, $resp, 'api');
+                        break;
+                    } catch (\Exception $e) {
+                        $delToken = $TokenTable->find("all")->where(["token" => $token->token])->first();
+                        debug($delToken);
+                        $TokenTable->delete($delToken);
+                    }
+                }
+
+
             }
             if (isset($resp->{$clan->id}->private->online_members)) {
                 $player_list = $resp->{$clan->id}->private->online_members;
@@ -242,49 +269,56 @@ class WarGamingHelper
         }
         return false;
     }
-    public function getPlayerByTsNick($nick){
-        $connection = ConnectionManager::get('default');
-        $res = $connection->execute("SELECT id FROM players WHERE locate(nick,?) LIMIT 1",[$nick])->fetchAll('assoc');
 
-        if(isset($res[0]["id"]) && $res[0]["id"]) {
+    public function getPlayerByTsNick($nick)
+    {
+        $connection = ConnectionManager::get('default');
+        $res = $connection->execute("SELECT id FROM players WHERE locate(nick,?) LIMIT 1", [$nick])->fetchAll('assoc');
+
+        if (isset($res[0]["id"]) && $res[0]["id"]) {
             $id = $res[0]["id"];
             return TableRegistry::getTableLocator()->get('Players')->get($id);;
         }
         return false;
     }
-    public static function getClanListArray(){
+
+    public static function getClanListArray()
+    {
         $ClansTable = TableRegistry::getTableLocator()->get('Clans');
         $clans = $ClansTable->find("all");
         $clan_array = [];
         /**
          * @var Clan $clan
          */
-        foreach ($clans as $clan){
-            $clan_array []=$clan->id;
+        foreach ($clans as $clan) {
+            $clan_array [] = $clan->id;
         }
         return $clan_array;
     }
 
-    public function getOldDays($player_id,$joined){
+    public function getOldDays($player_id, $joined)
+    {
         $clan_array = self::getClanListArray();
 
         $resp = $this->api->get("wot/clans/memberhistory/", ["account_id" => $player_id]);
         $data = $resp->{$player_id};
 
-        $sum =strtotime(date("Y-m-d H:i:s")) - strtotime($joined->format("Y-m-d H:i:s"));
+        $sum = strtotime(date("Y-m-d H:i:s")) - strtotime($joined->format("Y-m-d H:i:s"));
 
-        foreach ($data as $clan_hist){
-            if(in_array($clan_hist->clan_id,$clan_array) ){
+        foreach ($data as $clan_hist) {
+            if (in_array($clan_hist->clan_id, $clan_array)) {
                 $sum += $clan_hist->left_at - $clan_hist->joined_at;
             }
         }
 
-        return floor($sum / (60*60*24));
+        return floor($sum / (60 * 60 * 24));
     }
 
-    public function validateApiToken($token, $player_id){
-        $resp = $this->api->get("wgn/account/info/", ["access_token" => $token, "account_id" => $player_id, 'fields' =>'account_id,nickname,private.credits']);
-        if(isset($resp?->{$player_id}?->private?->credits) && $resp->{$player_id}->private->credits > 0){
+    public function validateApiToken($token, $player_id)
+    {
+        $resp = $this->api->get("wot/account/info", ["access_token" => $token, "account_id" => $player_id, 'fields' => 'account_id,nickname,private.credits']);
+
+        if (isset($resp?->{$player_id}?->private?->credits) && $resp->{$player_id}->private->credits > 0) {
             return true;
         }
         return false;

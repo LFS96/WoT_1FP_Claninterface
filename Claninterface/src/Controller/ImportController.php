@@ -16,35 +16,42 @@ class ImportController extends AppController
 {
     public function teamspeak(){
         $CR = new ClanRuleHelper();
-        $CR->checkTeamSpeak((new WarGamingHelper())->getOnlinePlayers(),(new TeamSpeakQueryHelper())->getClientlist());
+        $this->set("response",$CR->checkTeamSpeak((new WarGamingHelper())->getOnlinePlayers(),(new TeamSpeakQueryHelper())->getClientlist()));
     }
 
-    public function import(){
-        $ph = new PlayerDataHelper();
-        $ph->cleanUpPlayer();
-    }
 
     public function notice(){
-        (new TeamSpeakQueryHelper())->TeamSpeakSurveillance();
+        $this->set("AllClansChecked",(new TeamSpeakQueryHelper())->TeamSpeakSurveillance());
     }
 
     public function stats(){
         $ClansTable = TableRegistry::getTableLocator()->get('Clans');
         $clans = $ClansTable->find("all")->where(["cron" => 1]);
+         $WgApi = new WarGamingHelper();
+        $PlayerHelper = new PlayerDataHelper();
 
         /**
          * @var Clan $clan
          */
+
+        $resp = array();
+
         foreach ($clans as $clan) {
-            $PlayerHelper = new PlayerDataHelper();
-            $c = $PlayerHelper->importPlayerStatistic($clan->id);
+
+            $resp[$clan->id]["name"] = $clan->name;
+            $resp[$clan->id]["member"] = $WgApi->updateClanMembers($clan->id);
+
+            $resp[$clan->id]["stats"] = $PlayerHelper->importPlayerStatisticV2($clan->id);
             // $io->out($clan->short." Es wurden $c Datensätze geladen.");
         }
+
+        $this->set("response",$resp);
     }
 
     public function clean(){
         $ph = new PlayerDataHelper();
-        $ph->cleanUpPlayer();
+        $this->set("players", $ph->cleanUpPlayer());
+        $this->set("stats", $ph->cleanUpStatisics());
     }
 
     public function meeting(){
@@ -55,9 +62,10 @@ class ImportController extends AppController
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
-        // Configure the login action to not require authentication, preventing
-        // the infinite redirect loop issue
-        $this->Authentication->addUnauthenticatedActions(['teamspeak', 'import', 'notice', 'stats']);
+
+        // All public actions are allowed for guests.
+        $this->Authentication->allowUnauthenticated(get_class_methods($this));
+        $this->Authorization->skipAuthorization();
     }
 
 }

@@ -10,6 +10,7 @@ RUN apt-get update && \
     docker-php-ext-configure pdo_mysql && \
     docker-php-ext-install pdo_mysql &&  \
     a2enmod rewrite
+RUN echo 'memory_limit = 512M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
 
 # Run Composer install
 FROM composer as builder-composer

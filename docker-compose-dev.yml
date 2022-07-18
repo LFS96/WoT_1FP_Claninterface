@@ -15,7 +15,11 @@ services:
     networks:
       - claninterface
       - teamspeak_default
-    #network_mode: host
+    volumes:
+      - ./ClanInterface/src:/var/www/html/src
+      - ./ClanInterface/webroot:/var/www/html/webroot
+      - ./ClanInterface/templates:/var/www/html/templates
+      - ./ClanInterface/logs:/var/www/html/logs
   cron:
     build:
       context: ./
@@ -31,6 +35,15 @@ services:
     environment:
       - MARIADB_ROOT_PASSWORD=123456
       - MARIADB_DATABASE=claninterface
+    networks:
+      - claninterface
+  adminer:
+    image: adminer
+    restart: always
+    environment:
+      - ADMINER_PLUGINS=tables-filter tinymce
+    ports:
+      - 8080:8080
     networks:
       - claninterface
 networks:

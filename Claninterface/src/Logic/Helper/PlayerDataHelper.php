@@ -9,15 +9,18 @@ use App\Logic\Config\WgApi;
 use App\Model\Entity\Player;
 use App\Model\Entity\Statistic;
 use App\Model\Table\PlayersTable;
-use App\Model\Table\RawsTable;
+
 use App\Model\Table\StatisticsTable;
 use Cake\Console\ConsoleIo;
 use Cake\Core\Configure;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
+use Exception;
+use Wargaming\Api;
 
 class PlayerDataHelper
 {
-    private $api = null;
+    private ?Api $api;
     private $wn8expectedValues = null;
     private $tanktypes = null;
 
@@ -27,111 +30,124 @@ class PlayerDataHelper
 
     }
 
+
     /**
-     * Importiert die Statistischen Daten aller Spieler eines Clans
-     * @param int $clan WG-Clan id
-     * @param ConsoleIo|null $io
+     * Aktualisiert die Panzer-Statistiken aller Spieler eines Clans
+     * @param int $clan
      * @return int
      */
-    public function importPlayerStatistic($clan, $io = null )
+    public function importPlayerStatisticV2(int $clan):int
     {
-        /**
-         * @var PlayersTable $PlayerTables
-         * @var StatisticsTable $StatisticTables
-         */
+        $connection = ConnectionManager::get('default');
 
-        $PlayerTables = TableRegistry::getTableLocator()->get('Players');
-        $StatisticTables = TableRegistry::getTableLocator()->get('Statistics');
-
-        $players = $PlayerTables->find("all")->where(["clan_id" => $clan]);
+        $WgApiResults = array();
+        $player_array = array();
         $counter = 0;
 
-        $start = microtime(true);
-
+        //Dates switch on 04am, nightshift is last date
         $statDate = time() - (24 * 60 * 60);
-
         if (time() >= strtotime("04:00:00")) {
             $statDate = time();
         }
 
-        /** @var Player $player */
+        //Get all players from clan
+        $players = $connection->execute("SELECT p.id, token FROM players as p
+	                                LEFT JOIN tokens as t ON t.player_id = p.id AND t.expires > now()
+	                                WHERE clan_id = :clan", ["clan" => $clan])
+            ->fetchAll('assoc');
+
+
         foreach ($players as $player) {
-            //Download  from  WG-API
+            $player_array[$player["id"]] = $player["token"] ?? null;
+        }
+        unset($players);
+
+        foreach ($player_array as $player => $token) {
+            $body = ["account_id" => $player, "fields" => StatisticsConfigHelper::$FieldsList];
             try {
-                $stat = $this->api->get("wot/tanks/stats/", ["account_id" => $player->id, "fields" => StatisticsConfigHelper::$FieldsList]);
-            } catch (\Exception $e) {
-                if($io == null) {
-                    echo $e->getMessage();
-                }else{
-                    $io->out($e->getMessage());
+                if ($token !== null) {
+                    $body["access_token"] = $token;
                 }
+                $resp = WgApi::getWG_API()->get("wot/tanks/stats/", $body);
+            } catch (Exception $e) {
+                continue;
             }
-
-                foreach ($stat->{$player->id} as $tankStat) {
-                    foreach (StatisticsConfigHelper::$BattleTypes as $battleType) {
-                        $battleTypeStat = $tankStat->$battleType;
-                        if ($battleTypeStat->battles) {
-
-
-
-                            $stats = $StatisticTables->find("all")->where(
-                                ["player_id" => $player->id,
-                                "tank_id" => $tankStat->tank_id,
-                                "battletype" => $battleType,
-                                "battle" => $battleTypeStat->battles,]);
-
-                            if($stats->count()){
-                                /** @var Statistic $statistic */
-                                $statistic = $stats->first();
-                                $statistic->date_b = date("Y-m-d", $statDate);
-                                $StatisticTables->save($statistic);
-                            }else{
-                                $statistic = $StatisticTables->newEntity(
-                                    [
-                                        "player_id" => $player->id,
-                                        "tank_id" => $tankStat->tank_id,
-                                        "date" => date("Y-m-d", $statDate),
-                                        "date_b" => date("Y-m-d", $statDate),
-                                        "battletype" => $battleType,
-
-                                        //WN8
-                                        "damage" => $battleTypeStat->damage_dealt,
-                                        "spotted" => $battleTypeStat->spotted,
-                                        "frags" => $battleTypeStat->frags,
-                                        "droppedCapturePoints" => $battleTypeStat->dropped_capture_points,
-                                        "battle" => $battleTypeStat->battles,
-                                        "win" => $battleTypeStat->wins,
-
-                                        //erweitert
-                                        "shots" => $battleTypeStat->shots,
-                                        "hits" => $battleTypeStat->hits,
-                                        "xp" => $battleTypeStat->xp,
-                                        "survived" => $battleTypeStat->survived_battles,
-                                        "tanking" => intval($battleTypeStat->tanking_factor * 100),
-                                    ]
-                                );
-                                $statistic->date_b = date("Y-m-d", $statDate);
-                                $StatisticTables->save($statistic);
-                            }
-                            $counter++;
-                        }
-                    }
-                }
-
+            if (isset($resp?->{$player})) {
+                $WgApiResults [$player] = $resp->{$player};
+            }
+            $resp = null;
         }
 
-        $time_elapsed_secs = microtime(true) - $start;
-        //  echo $time_elapsed_secs;
+
+        foreach ($player_array as $player => $token) {
+            foreach ($WgApiResults[$player] as $tankStat) {
+                foreach (StatisticsConfigHelper::$BattleTypes as $battleType) {
+                    $battleTypeStat = $tankStat->$battleType;
+                    if ($battleTypeStat->battles) {
+
+                        $inGarage = -1;
+                        if(isset($tankStat->in_garage) && $tankStat->in_garage !== null){
+                            $inGarage = $tankStat->in_garage?1:0;
+                        }
+
+
+                        $connection
+                            ->execute('INSERT INTO statistics
+                                            (
+                                             player_id, tank_id, `date`, date_b, battletype, damage, spotted, frags, droppedCapturePoints,
+                                             battle, win, in_garage, modified, created, shots, xp, hits, survived, tanking
+                                             )
+                                    VALUES
+                                        (:player_id, :tank_id, :date_a, :date_b, :battletype, :damage, :spotted, :frags, :droppedCapturePoints,
+                                        :battle, :win, :in_garage, :modified, :created, :shots, :xp, :hits,:survived,:tanking)
+                                    ON DUPLICATE KEY
+                                    UPDATE date_b=curdate()',
+                                [
+                                    "player_id" => $player,
+                                    "tank_id" => $tankStat->tank_id,
+                                    "date_a" => date("Y-m-d", $statDate),
+                                    "date_b" => date("Y-m-d", $statDate),
+                                    "battletype" => $battleType,
+                                    //WN8
+                                    "damage" => $battleTypeStat->damage_dealt,
+                                    "spotted" => $battleTypeStat->spotted,
+                                    "frags" => $battleTypeStat->frags,
+                                    "droppedCapturePoints" => $battleTypeStat->dropped_capture_points,
+                                    "battle" => $battleTypeStat->battles,
+                                    "win" => $battleTypeStat->wins,
+                                    "in_garage" => $inGarage,
+                                    //DateTime
+                                    "modified" => date("Y-m-d H:i:s"),
+                                    "created" => date("Y-m-d H:i:s"),
+                                    //erweitert
+                                    "shots" => $battleTypeStat->shots,
+                                    "xp" => $battleTypeStat->xp,
+                                    "hits" => $battleTypeStat->hits,
+                                    "survived" => $battleTypeStat->survived_battles,
+                                    "tanking" => intval($battleTypeStat->tanking_factor * 100),
+
+
+                                ]);
+                        $counter++;
+                    }
+                }
+            }
+        }
         return $counter;
     }
 
-    public function cleanUpPlayer()
+
+    /**
+     *  Löscht alle Spieler, die den Clan verlassen haben.
+     * @return string
+     */
+    public function cleanUpPlayer(): string
     {
 
         $out = "";
 
         $PlayersTable = TableRegistry::getTableLocator()->get('Players');
-        $players = $PlayersTable->find("all")->where(function ($exp, $q) {
+        $players = $PlayersTable->find()->where(function ($exp) {
             return $exp->isNull('clan_id');
         });
 
@@ -141,7 +157,11 @@ class PlayerDataHelper
          * @var Player $player
          */
         foreach ($players as $player) {
-            $resp = $this->api->get("wot/clans/memberhistory/", ["account_id" => $player->id]);
+            try {
+                $resp = $this->api->get("wot/clans/memberhistory/", ["account_id" => $player->id]);
+            } catch (Exception $e) {
+                continue;
+            }
             $data = $resp->{$player->id};
 
 
@@ -164,5 +184,19 @@ class PlayerDataHelper
             }
         }
         return $out;
+    }
+
+    public function cleanUpStatisics():string
+    {
+        $result = "";
+
+        $connection = ConnectionManager::get('default');
+        $s = $connection->execute("DELETE s FROM statistics as s LEFT JOIN players as p ON p.id = s.player_id WHERE date_b < curdate() - INTERVAL 1 MONTH AND p.id IS NULL")->rowCount();
+        $result .= "Löschte $s Einträge aus der Statistiktabelle" . PHP_EOL;
+        $t = $connection->execute("DELETE t FROM tokens as t LEFT JOIN players as p ON p.id = t.player_id WHERE p.id IS NULL")->rowCount();
+        $result .= "Löschte $t Einträge aus der Token-Tabelle" . PHP_EOL;
+        $t = $connection->execute("DELETE t FROM teamspeaks as t LEFT JOIN players as p ON p.id = t.player_id WHERE p.id IS NULL")->rowCount();
+        $result .= "Löschte $t Einträge aus der Teamspeaks-Tabelle" . PHP_EOL;
+        return $result;
     }
 }

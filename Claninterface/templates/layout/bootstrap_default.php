@@ -184,7 +184,19 @@ if (isset($container)) {
     <br/>
     <?= $this->fetch('tb_footer'); ?>
 </div>
-<?php if (Configure::read('footer.enable') === true): ?>
+<?php
+
+$copyright = '    <span class="copyright-lfs96">by LFS96 '.
+    $this->Html->link('<i class="bi bi-github"></i>', 'https://github.com/LFS96/WoT_1FP_Claninterface', ["escape" => false, "target" => "_blank"]) .' '.
+    $this->Html->link('<i class="bi bi-telegram"></i>', 'https://t.me/FabiGothic', ["escape" => false, "target" => "_blank"]) .' '.
+    $this->Html->link('<i class="bi bi-instagram"></i>', 'https://instagram.com/fabigothic/', ["escape" => false, "target" => "_blank"]).'<br/>
+    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank"><img
+            alt="GNU GENERAL PUBLIC LICENSE" style="border-width:0"
+            src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"
+            title="Dieses Werk ist lizenziert unter einer GNU GENERAL PUBLIC LICENSE"/></a>
+    </span>';
+
+if (Configure::read('footer.enable') === true): ?>
     <br/><br/><br/><br/>
     <div class="container-fluid">
         <footer class="text-center text-lg-start bg-dark text-light fixed-bottom">
@@ -194,28 +206,12 @@ if (isset($container)) {
                     <?= $this->Html->link(Configure::read('footer.link.text'), Configure::read('footer.link.url'), ["target" => Configure::read('footer.link.target')]) ?>
                 </div>
             </div>
-            <span class="copyright-lfs96 ">by LFS96
-        <?= $this->Html->link('<i class="bi bi-github"></i>', 'https://github.com/LFS96/WoT_1FP_Claninterface', ["escape" => false, "target" => "_blank"]) ?>
-                <?= $this->Html->link('<i class="bi bi-telegram"></i>', 'https://t.me/FabiGothic', ["escape" => false, "target" => "_blank"]) ?>
-                <?= $this->Html->link('<i class="bi bi-instagram"></i>', 'https://instagram.com/fabigothic/', ["escape" => false, "target" => "_blank"]) ?><br/>
-        <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank"><img
-                alt="GNU GENERAL PUBLIC LICENSE" style="border-width:0"
-                src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"
-                title="Dieses Werk ist lizenziert unter einer GNU GENERAL PUBLIC LICENSE"/></a>
-    </span>
+            <?= $copyright; ?>
         </footer>
     </div>
 <?php endif; ?>
 <?php if (Configure::read('footer.enable') !== true): ?>
-    <span class="copyright-lfs96">by LFS96
-        <?= $this->Html->link('<i class="bi bi-github"></i>', 'https://github.com/LFS96/WoT_1FP_Claninterface', ["escape" => false, "target" => "_blank"]) ?>
-        <?= $this->Html->link('<i class="bi bi-telegram"></i>', 'https://t.me/FabiGothic', ["escape" => false, "target" => "_blank"]) ?>
-        <?= $this->Html->link('<i class="bi bi-instagram"></i>', 'https://instagram.com/fabigothic/', ["escape" => false, "target" => "_blank"]) ?><br/>
-        <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank"><img
-                alt="GNU GENERAL PUBLIC LICENSE" style="border-width:0"
-                src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"
-                title="Dieses Werk ist lizenziert unter einer GNU GENERAL PUBLIC LICENSE"/></a>
-    </span>
+    <?= $copyright; ?>
 <?php endif; ?>
 <?= $this->fetch('scriptBottom'); ?>
 <script>

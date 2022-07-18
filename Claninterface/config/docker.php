@@ -143,20 +143,17 @@ return [
      * Footer message block
      */
     'footer' => [
-        'enable' => env("FOOTER_ENABLE",true),
+        'enable' => filter_var(env("FOOTER_ENABLE",true),FILTER_VALIDATE_BOOLEAN),
         'text' => env("FOOTER_TEXT","Hier kann eure Footer Nachricht stehen."),
         'link' => [
-            'text' => "Google",
-            'url' => 'https://www.google.com/',
-            'target' => true,
+            'text' => env("FOOTER_LINK_TEXT","Google"),
+            'url' => env("FOOTER_LINK_URL",'https://www.google.com/'),
+            'target' => env("FOOTER_LINK_TARGET", '_blank'),
         ],
     ],
     /*
      * Define Teamspeak rooms that are used for Events
      * Will be used bei checking, if user joined an event
      */
-    'battle_rooms' => [
-        "room 1",
-        "room 2",
-    ],
+    'battle_rooms' => json_decode(env("BATTLE_ROOMS"),TRUE),
 ];

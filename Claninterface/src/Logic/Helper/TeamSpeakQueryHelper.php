@@ -178,7 +178,7 @@ class TeamSpeakQueryHelper
             }
         }
     }
-    public function TeamSpeakSurveillance(){
+    public function TeamSpeakSurveillance():bool{
         $clansTable = TableRegistry::getTableLocator()->get('Clans');
 
         $clanWithCheck = $clansTable
@@ -215,6 +215,8 @@ class TeamSpeakQueryHelper
                 (new TeamSpeakQueryHelper())->msgServerGroup($groups, $msg.$msgOkay);
             }
         }
+
+        return $allClansChecked;
 
     }
 }

@@ -13,7 +13,7 @@ use Cake\ORM\TableRegistry;
 
 class MeetingsHelper
 {
-    public static function createFollowMeeting()
+    public static function createFollowMeeting():void
     {
         /**
          * @var MeetingsTable $MeetingsTable
@@ -35,7 +35,7 @@ class MeetingsHelper
             $MeetingsTable->save($meeting);
         }
     }
-    public static function joinTsBattleRoom($channellist){
+    public static function joinTsBattleRoom($channellist):bool{
         $battleRooms = Configure::read('battle_rooms');
         foreach ($battleRooms as $room){
             if(str_contains($channellist, $room)){
@@ -45,7 +45,7 @@ class MeetingsHelper
         return false;
     }
 
-    public static function findParticipant()
+    public static function findParticipant():void
     {
         /**
          * @var MeetingsTable $MeetingsTable
