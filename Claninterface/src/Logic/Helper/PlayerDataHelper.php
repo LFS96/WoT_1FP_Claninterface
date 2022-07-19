@@ -101,7 +101,7 @@ class PlayerDataHelper
                                         (:player_id, :tank_id, :date_a, :date_b, :battletype, :damage, :spotted, :frags, :droppedCapturePoints,
                                         :battle, :win, :in_garage, :modified, :created, :shots, :xp, :hits,:survived,:tanking)
                                     ON DUPLICATE KEY
-                                    UPDATE date_b=curdate()',
+                                    UPDATE date_b=curdate() , in_garage=:in_garage, modified=now()',
                                 [
                                     "player_id" => $player,
                                     "tank_id" => $tankStat->tank_id,
@@ -125,8 +125,6 @@ class PlayerDataHelper
                                     "hits" => $battleTypeStat->hits,
                                     "survived" => $battleTypeStat->survived_battles,
                                     "tanking" => intval($battleTypeStat->tanking_factor * 100),
-
-
                                 ]);
                         $counter++;
                     }

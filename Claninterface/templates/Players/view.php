@@ -23,12 +23,12 @@ $types_wn = array();
 foreach ($stats as $stat) {
     $tank_wn8 = WN8Helper::calcWN8($stat, $stat->tank) * $stat->battle;
 
-    if(!isset($tier_wn [$stat->tank['tier']])){
-        $tier_battles [$stat->tank['tier']] =0;
+    if (!isset($tier_wn [$stat->tank['tier']])) {
+        $tier_battles [$stat->tank['tier']] = 0;
         $tier_wn [$stat->tank['tier']] = 0;
     }
-    if(!isset($types_wn [$stat->tank['tanktype']['name']])){
-        $types_battles [$stat->tank['tanktype']['name']] =0;
+    if (!isset($types_wn [$stat->tank['tanktype']['name']])) {
+        $types_battles [$stat->tank['tanktype']['name']] = 0;
         $types_wn [$stat->tank['tanktype']['name']] = 0;
     }
 
@@ -51,18 +51,18 @@ foreach ($types_battles as $k => $v) {
 }
 $label_tier = "";
 foreach ($tier_battles as $k => $v) {
-    $label_tier .= "'".StringHelper::numberToRomanRepresentation($k)."',";
+    $label_tier .= "'" . StringHelper::numberToRomanRepresentation($k) . "',";
 }
 ?>
 
 
-    <?= $this->Html->link(__('<i class="bi bi-chevron-left"></i> zurück'), ['controller' => 'Clans', 'action' => 'view', $player->clan_id], ["class" => "btn btn-dark btn-sm", "escape" => false]) ?>
-    <?php foreach (StatisticsConfigHelper::$BattleTypesNames as $name => $val):
-        $btn_class = $battletype== $val?"btn btn-info btn-sm":"btn btn-secondary btn-sm";?>
-        <?= $this->Html->link($name, ["action" => "view", $player->id, $val], ["class" => $btn_class]) ?>
-    <?php endforeach; ?>
-    <br/>
-    <br/>
+<?= $this->Html->link(__('<i class="bi bi-chevron-left"></i> zurück'), ['controller' => 'Clans', 'action' => 'view', $player->clan_id], ["class" => "btn btn-dark btn-sm", "escape" => false]) ?>
+<?php foreach (StatisticsConfigHelper::$BattleTypesNames as $name => $val):
+    $btn_class = $battletype == $val ? "btn btn-info btn-sm" : "btn btn-secondary btn-sm"; ?>
+    <?= $this->Html->link($name, ["action" => "view", $player->id, $val], ["class" => $btn_class]) ?>
+<?php endforeach; ?>
+<br/>
+<br/>
 
 <div class="players view large-9 medium-8 columns content">
     <h1><?= $this->Html->image("ranks/" . $player->rank->name . ".png", ["height" => 45]) ?> <?= h($player->nick) ?></h1>
@@ -73,7 +73,7 @@ foreach ($tier_battles as $k => $v) {
         </tr>
         <tr>
             <th scope="row"><?= __('Rang') ?></th>
-            <td><?= $player->has('rank') ? $this->Html->image("ranks/" . $player->rank->name . ".png", ["height" => 30]) . " " . (($user->canResult("Commander",$auth)->getStatus()) ? $this->Html->link($player->rank->speekName, ['controller' => 'Ranks', 'action' => 'view', $player->rank->id]) : $player->rank->speekName) : '' ?></td>
+            <td><?= $player->has('rank') ? $this->Html->image("ranks/" . $player->rank->name . ".png", ["height" => 30]) . " " . (($user->canResult("Commander", $auth)->getStatus()) ? $this->Html->link($player->rank->speekName, ['controller' => 'Ranks', 'action' => 'view', $player->rank->id]) : $player->rank->speekName) : '' ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('WN8') ?></th>
@@ -113,6 +113,7 @@ foreach ($tier_battles as $k => $v) {
     <table class="table DataTable table-striped table-sm">
         <thead>
         <tr>
+            <th>Garage</th>
             <th>Tier</th>
             <th>Name</th>
             <th>Typ</th>
@@ -129,10 +130,15 @@ foreach ($tier_battles as $k => $v) {
         <?php foreach ($stats as $stat):
             $wn8 = WN8Helper::calcWN8($stat, $stat->tank);
             $sieg = $stat->win * 100 / $stat->battle;
+
+            $inGarage = ($stat->in_garage == -1)?"<span class=\"dot bg-secondary\"></span>":(($stat->in_garage == 1)?"<span class=\"dot bg-success\"></span>":"<span class=\"dot bg-warning\"></span>");
+
             ?>
 
             <tr>
+                <td data-sort="<?= $stat->in_garage ?>"><?= $inGarage ?></td>
                 <td data-sort="<?= $stat->tank->tier ?>"> <?= StringHelper::numberToRomanRepresentation($stat->tank->tier) ?></td>
+
                 <td><?= $this->Html->image("tanktypes/" . ($stat->tank->premium ? "premium" : "tank") . ".png", ["height" => "20"]) ?> <?= $stat->tank->name ?></td>
                 <td><?= $this->Html->image("tanktypes/" . $stat->tank->tanktype["name"] . ".png", ["height" => "20"]) ?></td>
                 <td data-sort="<?= $stat->tank->nation ?>"><?= $this->Html->image("flags/" . $stat->tank->nation . ".png", ["height" => "20"]) ?></td>
@@ -149,7 +155,7 @@ foreach ($tier_battles as $k => $v) {
         <?php endforeach; ?>
         </tbody>
     </table>
-    <?php if ($user->canResult("Commander",$auth)->getStatus()): ?>
+    <?php if ($user->canResult("Commander", $auth)->getStatus()): ?>
         <br/>
         <h2>Veranstaltungen</h2>
         <table class="table DataTable">
@@ -198,17 +204,17 @@ foreach ($tier_battles as $k => $v) {
                         backgroundColor: 'rgba(18, 12, 110,0.2)',
                         borderColor: 'rgb(18, 12, 110)',
                         data: [<?php
-                        foreach ($types_battles as $v){
-                            echo "'$v',";
-                        }
-                        ?>],
+                            foreach ($types_battles as $v) {
+                                echo "'$v',";
+                            }
+                            ?>],
                     },
                     {
                         label: 'WN8',
                         backgroundColor: 'rgba(0, 110, 15,0.2)',
                         borderColor: 'rgb(0, 110, 15)',
                         data: [<?php
-                            foreach ($types_wn as $k => $v){
+                            foreach ($types_wn as $k => $v) {
                                 $val = $v / $types_battles[$k];
                                 echo "'$val',";
                             }
@@ -237,7 +243,7 @@ foreach ($tier_battles as $k => $v) {
                         backgroundColor: 'rgba(18, 12, 110,0.2)',
                         borderColor: 'rgb(18, 12, 110)',
                         data: [<?php
-                            foreach ($tier_battles as $v){
+                            foreach ($tier_battles as $v) {
                                 echo "'$v',";
                             }
                             ?>],
@@ -247,7 +253,7 @@ foreach ($tier_battles as $k => $v) {
                         backgroundColor: 'rgba(0, 110, 15,0.2)',
                         borderColor: 'rgb(0, 110, 15)',
                         data: [<?php
-                            foreach ($tier_wn as $k => $v){
+                            foreach ($tier_wn as $k => $v) {
                                 $val = $v / $tier_battles[$k];
                                 echo "'$val',";
                             }
