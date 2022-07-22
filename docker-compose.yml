@@ -15,6 +15,7 @@ services:
     networks:
       - claninterface
       - teamspeak_default
+      - nginx_proxy_default
     #network_mode: host
   cron:
     build:
@@ -38,3 +39,6 @@ networks:
     driver: bridge
   teamspeak_default:
     external: true
+  nginx_proxy_default:
+     external: true
+
