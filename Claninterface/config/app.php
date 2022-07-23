@@ -413,6 +413,6 @@ return [
      */
     'Session' => [
         'defaults' => 'database',
-        'timeout' => 0
+        'timeout' => 20160 //14 days
     ],
 ];
