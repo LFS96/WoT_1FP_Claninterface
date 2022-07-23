@@ -25,6 +25,7 @@ use App\View\AppView;
             <th>Spieler</th>
             <th>Sekunden</th>
             <th>Anzahl</th>
+            <th>Löschen</th>
         </tr>
         </thead>
         <tbody>
@@ -36,6 +37,7 @@ use App\View\AppView;
                 <td><?= $ts->nick ?></td>
                 <td data-order="<?= $ts->sum ?>"><?= TimeHelper::secondsToTime($ts->sum) ?></td>
                 <td><?= $ts->count ?></td>
+                <td><?= $this->Form->postButton("Einträge löschen",["action"=>"deletePlayer",$ts->id ]) ?></td>
             </tr>
         <?php } ?>
         </tbody>

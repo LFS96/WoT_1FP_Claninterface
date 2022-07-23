@@ -88,7 +88,66 @@ class WarGamingHelper
         return false;
     }
 
+
+    /**
+     * Updatet Clanmember Status
+     */
+    public function updateClanMemberStatus($clan_id)
+    {
+        $anz = 0;
+        $PlayersTable = TableRegistry::getTableLocator()->get('Players');
+        try {
+            $WGClanData = $this->api->get("wot/clans/info", ["clan_id" => $clan_id, "fields" => "members"]);
+        } catch (\Exception $e) {
+            return false;
+        }
+        if ($WGClanData) {
+            $members = $WGClanData->$clan_id->members;
+
+            if (count($members)) {
+                //Step 2: Clan mitgliedschaft austragen
+                /**
+                 * @var Player[] $players
+                 */
+                $players = $PlayersTable->find("all")->where(["clan_id" => $clan_id]);
+                foreach ($players as $player) {
+                    $player->clan_id = null;
+                    $player->clan = null;
+                    $PlayersTable->save($player);
+                }
+                unset($players);
+
+            }
+            foreach ($members as $member) {
+                $players = $PlayersTable->find("all")->where(["id" => $member->account_id]);
+                /**
+                 * @var Player $player
+                 */
+                if ($players->count()) {
+                    //vorhandener Spieler
+                    $player = $players->first();
+                } else {
+                    //neuer Player
+                    $player = $PlayersTable->newEmptyEntity();
+                    $player->id = $member->account_id;
+                    $player->lastBattle = $this->getLastBattle($member->account_id);
+                    $player->battle = $this->getBattleCount($member->account_id);
+                    $player->wn8 = WN8Helper::getPlayerWN8($member->account_id);
+                }
+                $player->clan_id = $clan_id;
+                $player->rank_id = RanksHelper::string2rank($member->role);
+                $player->nick = $member->account_name;
+                $player->joined = DateTime::createFromFormat('U', $member->joined_at);
+                $PlayersTable->save($player);
+                $anz++;
+
+            }
+        }
+        return $anz;
+    }
+
     /** Aktualisiert die Spieler die dem Clan angehören in der DB
+     * Es werden auch der Rang, die Gefechte und das letzte Gefecht und WN8 des Spielers gespeichert
      * @param int $clan_id
      * @return false|int
      * @throws \Exception

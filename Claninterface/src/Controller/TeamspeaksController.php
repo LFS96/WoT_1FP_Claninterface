@@ -73,6 +73,19 @@ class TeamspeaksController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+    public function deletePlayer($id = null)
+    {
+        $this->Authorization->authorize($this->LoggedInUsers,"Personal");
+        $this->request->allowMethod(['post', 'delete']);
+        $teamspeaks = $this->Teamspeaks->find("all")->where(["player_id" => $id]);
+        $count = 0;
+        foreach ($teamspeaks as $teamspeak) {
+            $this->Teamspeaks->delete($teamspeak);
+            $count++;
+        }
+        $this->Flash->success(__('Es wurden '.$count.' Einträge gelöscht'));
+        return $this->redirect(['action' => 'players']);
+    }
 
     public function players()
     {

@@ -23,6 +23,45 @@ class ImportController extends AppController
     public function notice(){
         $this->set("AllClansChecked",(new TeamSpeakQueryHelper())->TeamSpeakSurveillance());
     }
+    public function member(){
+        $ClansTable = TableRegistry::getTableLocator()->get('Clans');
+        $clans = $ClansTable->find("all")->where(["cron" => 1]);
+        $WgApi = new WarGamingHelper();
+        $PlayerHelper = new PlayerDataHelper();
+
+        /**
+         * @var Clan $clan
+         */
+
+        $resp = array();
+
+        foreach ($clans as $clan) {
+            $resp[$clan->id]["name"] = $clan->name;
+            $resp[$clan->id]["member"] = $WgApi->updateClanMemberStatus($clan->id);
+
+        }
+        $this->set("response",$resp);
+    }
+
+    public function membersstats(){
+        $ClansTable = TableRegistry::getTableLocator()->get('Clans');
+        $clans = $ClansTable->find("all")->where(["cron" => 1]);
+        $WgApi = new WarGamingHelper();
+        $PlayerHelper = new PlayerDataHelper();
+
+        /**
+         * @var Clan $clan
+         */
+
+        $resp = array();
+
+        foreach ($clans as $clan) {
+            $resp[$clan->id]["name"] = $clan->name;
+            $resp[$clan->id]["member"] = $WgApi->updateClanMembers($clan->id);
+
+        }
+        $this->set("response",$resp);
+    }
 
     public function stats(){
         $ClansTable = TableRegistry::getTableLocator()->get('Clans');
@@ -39,7 +78,7 @@ class ImportController extends AppController
         foreach ($clans as $clan) {
 
             $resp[$clan->id]["name"] = $clan->name;
-            $resp[$clan->id]["member"] = $WgApi->updateClanMembers($clan->id);
+            $resp[$clan->id]["member"] = $WgApi->updateClanMemberStatus($clan->id);
 
             $resp[$clan->id]["stats"] = $PlayerHelper->importPlayerStatisticV2($clan->id);
             // $io->out($clan->short." Es wurden $c Datensätze geladen.");
