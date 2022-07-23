@@ -13,6 +13,12 @@ use Cake\Collection\CollectionInterface;
 
 <div class="clans index large-9 medium-8 columns content">
     <h3><?= __('Clan Verwaltung') ?></h3>
+    <?php if ($user?->canResult("Admin",$auth)->getStatus()): ?>
+    <?= $this->Html->link(__('Spieler Clans neuzuordnen'), ["controller" => "import",'action' => 'member'], ['class' => 'btn btn-dark']) ?>
+    <br />
+    <br />
+
+    <?php endif ?>
 
     <?php foreach ($clans as $clan): ?>
         <div class="clan">
