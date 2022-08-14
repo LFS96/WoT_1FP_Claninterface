@@ -13,19 +13,24 @@ use Cake\ORM\TableRegistry;
 
 class MeetingsHelper
 {
-    public static function createFollowMeeting():void
+    public static function createFollowMeeting(int $OnlyRunning = 1):void
     {
         /**
          * @var MeetingsTable $MeetingsTable
          */
         $MeetingsTable = TableRegistry::getTableLocator()->get('Meetings');
-        $running = $MeetingsTable->find("all")->where(["cloned"=> 1,"date" => date("Y-m-d"), "start <="=> date("H:i:00"),"end >="=> date("H:i:00")]);
+        if($OnlyRunning == 1) {
+            $running = $MeetingsTable->find("all")->where(["cloned" => 1, "date" => date("Y-m-d"), "start <=" => date("H:i:00"), "end >=" => date("H:i:00")]);
+        }else{
+            $running = $MeetingsTable->find("all")->where(["cloned" => 1]);
+        }
         /**
          * @var Meeting $meeting
          */
         foreach ($running as $meeting){
 
-            $newMeeting = $MeetingsTable->newEmptyEntity()($meeting->toArray());
+            $newMeeting = $MeetingsTable->newEmptyEntity();
+            $newMeeting = $MeetingsTable->patchEntity($newMeeting, $meeting->toArray());
             unset($newMeeting->created);
             unset($newMeeting->id);
             $newMeeting->date = $newMeeting->date->addDay(7);

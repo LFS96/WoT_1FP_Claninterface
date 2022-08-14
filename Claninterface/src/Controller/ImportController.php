@@ -92,7 +92,10 @@ class ImportController extends AppController
         $this->set("players", $ph->cleanUpPlayer());
         $this->set("stats", $ph->cleanUpStatisics());
     }
+    public function meetingAll(){
+        MeetingsHelper::createFollowMeeting(0);
 
+    }
     public function meeting(){
         MeetingsHelper::createFollowMeeting();
         MeetingsHelper::findParticipant();
