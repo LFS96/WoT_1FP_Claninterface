@@ -19,6 +19,7 @@ class MeetingsHelper
          * @var MeetingsTable $MeetingsTable
          */
         $MeetingsTable = TableRegistry::getTableLocator()->get('Meetings');
+        $running = null;
         if($OnlyRunning == 1) {
             $running = $MeetingsTable->find("all")->where(["cloned" => 1, "date" => date("Y-m-d"), "start <=" => date("H:i:00"), "end >=" => date("H:i:00")]);
         }else{
