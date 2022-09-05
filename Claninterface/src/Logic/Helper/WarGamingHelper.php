@@ -297,9 +297,9 @@ class WarGamingHelper
                         Cache::write('wgn_clans_info_' . $clan->id, $resp, 'api');
                         break;
                     } catch (\Exception $e) {
-                        $delToken = $TokenTable->find("all")->where(["token" => $token->token])->first();
-                        debug($delToken);
-                        $TokenTable->delete($delToken);
+//                        $delToken = $TokenTable->find("all")->where(["token" => $token->token])->first();
+//                        debug($delToken);
+//                        $TokenTable->delete($delToken);
                     }
                 }
 
