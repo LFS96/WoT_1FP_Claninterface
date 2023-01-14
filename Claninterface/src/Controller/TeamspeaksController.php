@@ -52,7 +52,25 @@ class TeamspeaksController extends AppController
         $this->Authorization->authorize($this->LoggedInUsers,"Personal");
         $this->set("online", (new TeamSpeakQueryHelper())->getOnlinePlayersInfo());
     }
+    public function pokeAll()
+    {
+        $this->Authorization->authorize($this->LoggedInUsers, "Admin");
 
+        $TSQH = new TeamSpeakQueryHelper();
+
+
+
+        $Nachricht = $this->request->getData()["Nachricht"];
+
+        $allPlayers = $TSQH->getOnlinePlayersInfo();
+        foreach ($allPlayers as $row){
+            $TSQH->pokePlayerByName($row["teamspeak"],$Nachricht);
+        }
+        $this->Flash->success(__('Wir haben alle angestupst'));
+
+
+        return $this->redirect(['action' => 'tsOnline']);
+    }
     /**
      * Delete method
      *

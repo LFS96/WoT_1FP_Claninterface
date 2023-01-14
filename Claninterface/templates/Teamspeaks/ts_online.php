@@ -47,4 +47,17 @@ use App\View\AppView;
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<?php if($user->can("Admin",$auth)): ?>
+<hr>
+<h4>Nachricht an alle</h4>
+<?= $this->Form->create(null,["action" => "pokeAll"]) ?>
+<?= $this->Form->control('Nachricht'); ?>
+<?= $this->Form->button(__('Senden'),["class" => "btn btn-success"]) ?>
+<?= $this->Form->end() ?>
+<?php endif; ?>
+
+
+
+
 <?= $this->element('DataTables', ['orderCol' => 4, 'order' => 'asc']) ?>
