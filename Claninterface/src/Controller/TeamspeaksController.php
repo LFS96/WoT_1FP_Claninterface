@@ -8,6 +8,7 @@ use App\Logic\Helper\TeamSpeakQueryHelper;
 use App\Logic\Helper\WarGamingHelper;
 use App\Model\Table\ClansTable;
 use Cake\Datasource\ConnectionManager;
+use Exception;
 
 /**
  * Teamspeaks Controller
@@ -64,7 +65,11 @@ class TeamspeaksController extends AppController
 
         $allPlayers = $TSQH->getOnlinePlayersInfo();
         foreach ($allPlayers as $row){
-            $TSQH->pokePlayerByName($row["teamspeak"],$Nachricht);
+            try {
+                $TSQH->pokePlayerByUID($row["teamspeakUID"], $Nachricht);
+            }catch(exception $e){
+                $this->Flash->success(__("({$row["teamspeak"]}) - ".$e->getMessage()));
+            }
         }
         $this->Flash->success(__('Wir haben alle angestupst'));
 
