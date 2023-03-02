@@ -14,16 +14,16 @@ services:
     env_file: .env
     networks:
       - claninterface
-      - teamspeak_default
     volumes:
+      - ./ClanInterface/config:/var/www/html/config
       - ./ClanInterface/src:/var/www/html/src
       - ./ClanInterface/webroot:/var/www/html/webroot
       - ./ClanInterface/templates:/var/www/html/templates
       - ./ClanInterface/logs:/var/www/html/logs
   cron:
-    build:
-      context: ./
-      dockerfile: DockerfileCron
+    image: lfs96/cron:latest
+    volumes:
+      - ./crontabs/:/etc/crontabs/
     networks:
       - claninterface
   claninterface_mysql:
@@ -49,5 +49,3 @@ services:
 networks:
   claninterface:
     driver: bridge
-  teamspeak_default:
-    external: true

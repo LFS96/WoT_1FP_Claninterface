@@ -1,14 +1,33 @@
 version: "3" #This is the docker-compose version, NOT the projektversion
 services:
+  cron:
+    image: lfs96/cron:latest
+    volumes:
+      - ./crontabs/:/etc/crontabs/
+    restart: always
+    environment:
+      - com.centurylinklabs.watchtower.enable=false
+    networks:
+      - claninterface
+  claninterface_mysql:
+    image: "mariadb"
+    volumes:
+      - ./data/db:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=123456
+      - MARIADB_DATABASE=claninterface
+    restart: always
+    networks:
+      - claninterface
   claninterface_amp:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-      args:
-        branch: main
+    image: lfs96/wot-claninterface-1fp:latest
+    restart: always
+    depends_on:
+      - claninterface_mysql
+      - cron
     ports:
-      - "1080:80"  # nginx reverse Proxy
-      - "1443:443" # nginx reverse Proxy
+      - "127.0.0.1:1080:80"  # nginx reverse Proxy
+      - "127.0.0.1:1443:443" # nginx reverse Proxy
       # - "80:80"    # standalone
       # - "443:443"  # standalone
     env_file: .env
@@ -17,28 +36,13 @@ services:
       - teamspeak_default
       - nginx_proxy_default
     #network_mode: host
-  cron:
-    build:
-      context: ./
-      dockerfile: DockerfileCron
-    networks:
-      - claninterface
-  claninterface_mysql:
-    image: "mariadb"
-    volumes:
-      - ./data/db:/var/lib/mysql
-    ports:
-      - "3306"
-    environment:
-      - MARIADB_ROOT_PASSWORD=123456
-      - MARIADB_DATABASE=claninterface
-    networks:
-      - claninterface
+
 networks:
   claninterface:
     driver: bridge
   teamspeak_default:
     external: true
   nginx_proxy_default:
-     external: true
+    external: true
+
 
