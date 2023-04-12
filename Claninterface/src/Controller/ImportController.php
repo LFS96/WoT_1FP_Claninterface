@@ -98,7 +98,7 @@ class ImportController extends AppController
     }
     public function meeting(){
         MeetingsHelper::createFollowMeeting();
-        MeetingsHelper::findParticipant();
+       $this->set("c", MeetingsHelper::findParticipant());
     }
 
     public function beforeFilter(\Cake\Event\EventInterface $event)

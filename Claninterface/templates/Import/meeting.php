@@ -1,4 +1,4 @@
 <?php
 
-echo "All done.<br />";
+echo "All done. ($c)<br />";
 

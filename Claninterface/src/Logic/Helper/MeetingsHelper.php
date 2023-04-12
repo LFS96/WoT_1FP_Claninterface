@@ -51,7 +51,7 @@ class MeetingsHelper
         return false;
     }
 
-    public static function findParticipant():void
+    public static function findParticipant():string
     {
         /**
          * @var MeetingsTable $MeetingsTable
@@ -62,6 +62,9 @@ class MeetingsHelper
         /**
          * @var Meeting $meeting
          */
+        $count = 0;
+        $meetings= 0;
+        $online = 0;
         foreach ($running as $meeting){
             $online  = (new TeamSpeakQueryHelper())->getOnlinePlayersInfo();
             foreach ($online as $item){
@@ -77,6 +80,9 @@ class MeetingsHelper
                              $participant->channel .= ", ".$item['channel'];
                          }
                      }else{
+                         /**
+                          * @var Meetingparticipant $participant
+                          */
                          $participant = $ParticipantsTable->newEmptyEntity();
                          $participant->meeting_id = $meeting->id;
                          $participant->player_id = $item['id'];
@@ -88,9 +94,13 @@ class MeetingsHelper
 
 
                     $ParticipantsTable->save($participant);
+                    $count++;
                 }
 
+                $online++;
             }
+            $meetings++;
         }
+        return $count."/".$online."/".$meetings;
     }
 }
