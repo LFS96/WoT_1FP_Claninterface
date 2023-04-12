@@ -64,7 +64,7 @@ class MeetingsHelper
          */
         $count = 0;
         $meetings= 0;
-        $online = 0;
+        $online_counter = 0;
         foreach ($running as $meeting){
             $online  = (new TeamSpeakQueryHelper())->getOnlinePlayersInfo();
             foreach ($online as $item){
@@ -97,10 +97,10 @@ class MeetingsHelper
                     $count++;
                 }
 
-                $online++;
+                $online_counter++;
             }
             $meetings++;
         }
-        return $count."/".$online."/".$meetings;
+        return $count."/".$online_counter."/".$meetings;
     }
 }
