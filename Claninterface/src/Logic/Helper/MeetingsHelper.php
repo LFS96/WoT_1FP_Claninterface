@@ -80,7 +80,7 @@ class MeetingsHelper
                          $participant = $ParticipantsTable->newEmptyEntity();
                          $participant->meeting_id = $meeting->id;
                          $participant->player_id = $item['id'];
-                         $participant->joined = Time::now();
+                         $participant->joined = date("Y-m-d H:i:s");
                          $participant->channel = $item['channel'];
                          $participant->wot = $item['online']?1:0;
                          $participant->teamspeak =$item['teamspeak'];
